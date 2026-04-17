@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 const isProd = process.env.NODE_ENV === 'production';
-const projectName = 'software-projekt';
+const projectName = 'voya';
 
 const nextConfig: NextConfig = {
   output: 'export',
