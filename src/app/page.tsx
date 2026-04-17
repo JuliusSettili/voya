@@ -4,7 +4,7 @@ export default function Home() {
         <h1 className="text-4xl font-bold">
           Reise Journal
         </h1>
-        <img src="/globe.svg" alt="Globe" className="w-32 h-32" />
+        <img src="globe.svg" alt="Globe" className="w-32 h-32" />
       </main>
   );
 }
