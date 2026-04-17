@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
+const isProd = process.env.NODE_ENV === 'production';
+const projectName = 'software-projekt';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'export',
+  basePath: isProd ? `/${projectName}` : '',
+  assetPrefix: isProd ? `/${projectName}/` : '',
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;
