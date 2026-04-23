@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { supabaseAnonKey, supabaseUrl } from "../src/config/supabaseConfig";
+import { supabaseAnonKey, supabaseUrl } from "../config/supabaseConfig";
 
 export type Country = {
   id: number;
@@ -31,6 +31,12 @@ export function getSupabaseClient() {
     return supabaseClient;
   }
 
-  supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+  supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+  });
   return supabaseClient;
 }

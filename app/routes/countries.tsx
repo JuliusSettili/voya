@@ -1,8 +1,6 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { fetchCountries } from "../../../lib/countries";
-import { Country } from "../../../lib/supabaseClient";
+import { fetchCountries } from "../../api/countries";
+import type { Country } from "../../api/supabaseClient";
 
 export default function CountriesPage() {
   const [countries, setCountries] = useState<Country[]>([]);

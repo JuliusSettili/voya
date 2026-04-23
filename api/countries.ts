@@ -1,4 +1,5 @@
-import { Country, getSupabaseClient } from "./supabaseClient";
+import { getSupabaseClient } from "./supabaseClient";
+import type { Country } from "./supabaseClient";
 
 export async function fetchCountries(): Promise<Country[]> {
   const supabase = getSupabaseClient();

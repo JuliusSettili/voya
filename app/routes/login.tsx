@@ -1,14 +1,30 @@
-import { login } from './actions';
+import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
+import { login } from '../../api/login';
 
-export const dynamic = 'force-dynamic';
+export default function LoginPage() {
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const queryError = searchParams.get('error');
+    const [error, setError] = useState<string | null>(queryError);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-export default async function LoginPage({
-                                            searchParams,
-                                        }: {
-    searchParams: Promise<{ error?: string }>;
-}) {
-    // Warten auf die URL-Parameter
-    const { error } = await searchParams;
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        setIsSubmitting(true);
+        setError(null);
+
+        const result = await login(new FormData(event.currentTarget));
+
+        setIsSubmitting(false);
+
+        if (!result.success) {
+            setError(result.error ?? 'Falsche E-Mail oder Passwort');
+            return;
+        }
+
+        navigate('/');
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
@@ -28,7 +44,7 @@ export default async function LoginPage({
                     )}
 
                     {/* Formular */}
-                    <form action={login} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="email">
                                 E-Mail Adresse
@@ -37,7 +53,7 @@ export default async function LoginPage({
                                 type="email"
                                 id="email"
                                 name="email"
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-gray-50 focus:bg-white text-gray-700"
                                 placeholder="beispiel@email.com"
                                 required
                             />
@@ -51,7 +67,7 @@ export default async function LoginPage({
                                 type="password"
                                 id="password"
                                 name="password"
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-gray-50 focus:bg-white"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-gray-50 focus:bg-white text-gray-700"
                                 placeholder="••••••••"
                                 required
                             />
@@ -60,9 +76,10 @@ export default async function LoginPage({
                         <div className="flex justify-end pt-4">
                             <button
                                 type="submit"
+                                disabled={isSubmitting}
                                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg active:transform active:scale-95"
                             >
-                                Einloggen
+                                {isSubmitting ? 'Einloggen...' : 'Einloggen'}
                             </button>
                         </div>
                     </form>
