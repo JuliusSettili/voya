@@ -1,4 +1,4 @@
-name: Deploy Next.js to GitHub Pages
+name: Deploy React Router to GitHub Pages
 
 on:
   workflow_dispatch:
@@ -31,11 +31,12 @@ jobs:
 
       - run: npm ci
       - run: npm run build
-      - run: touch out/.nojekyll
+      - run: cp build/client/index.html build/client/404.html
+      - run: touch build/client/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: out
+          path: build/client
 
   deploy:
     needs: build
