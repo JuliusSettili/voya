@@ -7,15 +7,6 @@ export type AppRouteDefinition = {
   onlyGuests: boolean;
 };
 
-const DEFAULT_ROUTE_FLAGS: Pick<
-  AppRouteDefinition,
-  "hideNavbar" | "authRequired" | "onlyGuests"
-> = {
-  hideNavbar: false,
-  authRequired: true,
-  onlyGuests: false,
-};
-
 export const APP_ROUTE_DEFINITIONS: AppRouteDefinition[] = [
   {
     path: "/",
@@ -53,6 +44,13 @@ export const APP_ROUTE_DEFINITIONS: AppRouteDefinition[] = [
     authRequired: true,
     onlyGuests: false,
   },
+  {
+    path: "/404",
+    file: "routes/notFound.tsx",
+    hideNavbar: true,
+    authRequired: false,
+    onlyGuests: false,
+  }
 ];
 
 export function normalizeAppPath(pathname: string) {
@@ -76,10 +74,5 @@ export function getRouteConfig(pathname: string): AppRouteDefinition {
     (definition) => definition.path === normalizedPath
   );
 
-  return {
-    ...DEFAULT_ROUTE_FLAGS,
-    file: routeDefinition?.file ?? "",
-    ...(routeDefinition ?? {}),
-    path: normalizedPath,
-  };
+  return routeDefinition || APP_ROUTE_DEFINITIONS.find((def) => def.path === "/404")!;
 }
