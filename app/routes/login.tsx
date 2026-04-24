@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { login } from '../../api/login';
 import InputField from '../components/InputField';
 
@@ -68,11 +68,18 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg active:transform active:scale-95"
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lga w-100 active:transform active:scale-95"
                             >
                                 {isSubmitting ? 'Einloggen...' : 'Einloggen'}
                             </button>
                         </div>
+
+                        <p className="text-sm text-gray-600 text-center">
+                            Noch kein Konto?{' '}
+                            <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+                                Jetzt registrieren
+                            </Link>
+                        </p>
                     </form>
 
                 </div>

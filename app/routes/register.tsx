@@ -1,6 +1,6 @@
 'use client'
 
-import { useFetcher } from 'react-router'
+import { Link, useFetcher } from 'react-router'
 import { signup } from '../../api/signup'
 import InputField from '../components/InputField'
 
@@ -71,12 +71,12 @@ export default function RegisterPage() {
                                     💡 <strong>Hinweis:</strong> Wenn du die E-Mail nicht erhalten hast, überprüfe auch deinen Spam-Ordner oder fordere eine neue Bestätigungsmail an.
                                 </p>
                             </div>
-                            <button
-                                onClick={() => window.location.href = '/voya/login'}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                            <Link
+                                to="/login"
+                                className="w-full inline-flex justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
                             >
                                 Zur Anmeldung
-                            </button>
+                            </Link>
                         </>
                     ) : (
                         <>
@@ -141,11 +141,18 @@ export default function RegisterPage() {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg active:transform active:scale-95"
+                                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg active:transform w-100 active:scale-95"
                                     >
                                         {isSubmitting ? 'Wird registriert...' : 'Registrieren'}
                                     </button>
                                 </div>
+
+                                <p className="text-sm text-gray-600 text-center">
+                                    Bereits ein Konto?{' '}
+                                    <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+                                        Hier einloggen
+                                    </Link>
+                                </p>
                             </fetcher.Form>
                         </>
                     )}
