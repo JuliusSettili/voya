@@ -2,6 +2,7 @@
 
 import { useFetcher } from 'react-router'
 import { signup } from '../../api/signup'
+import InputField from '../components/InputField'
 
 type RegisterErrors = {
     displayName?: string
@@ -89,88 +90,51 @@ export default function RegisterPage() {
                             )}
 
                             <fetcher.Form method="post" className="space-y-5">
+                                <InputField
+                                    type="text"
+                                    id="displayName"
+                                    name="displayName"
+                                    label="Anzeigename"
+                                    placeholder="Max Mustermann"
+                                    required
+                                    disabled={isSubmitting}
+                                    error={errors.displayName}
+                                />
 
-                                {/* Anzeigename Feld */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="displayName">
-                                        Anzeigename
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="displayName"
-                                        name="displayName"
-                                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:outline-none transition-all duration-200 text-gray-700 ${errors.displayName
-                                            ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50'
-                                            : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 focus:bg-white'
-                                        }`}
-                                        placeholder="Max Mustermann"
-                                        required
-                                        disabled={isSubmitting}
-                                    />
-                                    {errors.displayName && <p className="text-xs text-red-600 mt-1">{errors.displayName}</p>}
-                                </div>
+                                <InputField
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    label="E-Mail Adresse"
+                                    placeholder="beispiel@email.com"
+                                    required
+                                    disabled={isSubmitting}
+                                    error={errors.email}
+                                />
 
-                                {/* E-Mail Feld */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="email">
-                                        E-Mail Adresse
-                                    </label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:outline-none transition-all duration-200 text-gray-700 ${errors.email
-                                            ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50'
-                                            : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 focus:bg-white'
-                                        }`}
-                                        placeholder="beispiel@email.com"
-                                        required
-                                        disabled={isSubmitting}
-                                    />
-                                    {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
-                                </div>
+                                <InputField
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    label="Passwort"
+                                    placeholder="••••••••"
+                                    required
+                                    minLength={8}
+                                    disabled={isSubmitting}
+                                    error={errors.password}
+                                />
 
-                                {/* Passwort Feld */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="password">
-                                        Passwort
-                                    </label>
-                                    <input
-                                        type="password"
-                                        id="password"
-                                        name="password"
-                                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:outline-none transition-all duration-200 text-gray-700 ${errors.password
-                                            ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50'
-                                            : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 focus:bg-white'
-                                        }`}
-                                        placeholder="••••••••"
-                                        required
-                                        minLength={8}
-                                        disabled={isSubmitting}
-                                    />
-                                    {errors.password && <p className="text-xs text-red-600 mt-1">{errors.password}</p>}
-                                </div>
-
-                                {/* Passwort bestätigen Feld */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5" htmlFor="confirmPassword">
-                                        Passwort bestätigen
-                                    </label>
-                                    <input
-                                        type="password"
-                                        id="confirmPassword"
-                                        name="confirmPassword"
-                                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:outline-none transition-all duration-200 text-gray-700 ${errors.confirmPassword
-                                            ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50'
-                                            : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 focus:bg-white'
-                                        }`}
-                                        placeholder="••••••••"
-                                        required
-                                        minLength={8}
-                                        disabled={isSubmitting}
-                                    />
-                                    {errors.confirmPassword && <p className="text-xs text-red-600 mt-1">{errors.confirmPassword}</p>}
-                                </div>
+                                <InputField
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    label="Passwort bestätigen"
+                                    placeholder="••••••••"
+                                    required
+                                    minLength={8}
+                                    disabled={isSubmitting}
+                                    error={errors.confirmPassword}
+                                />
 
                                 {/* Button */}
                                 <div className="flex justify-end pt-4">
