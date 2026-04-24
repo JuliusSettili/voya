@@ -16,6 +16,10 @@ export const clientMiddleware: Route.ClientMiddlewareFunction[] = [
   authGuardMiddleware,
 ];
 
+export function HydrateFallback() {
+  return <div>Loading...</div>;
+}
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
