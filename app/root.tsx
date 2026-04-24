@@ -5,11 +5,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import Navbar from "./components/navbar";
+import { getRouteConfig } from "./config/routeDefinitions";
 import { authGuardMiddleware } from "./middleware/auth";
 
 export const clientMiddleware: Route.ClientMiddlewareFunction[] = [
@@ -52,9 +54,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
+  const { hideNavbar } = getRouteConfig(location.pathname);
+
   return (
     <>
-      <Navbar />
+      {!hideNavbar ? <Navbar /> : null}
       <Outlet />
     </>
   );

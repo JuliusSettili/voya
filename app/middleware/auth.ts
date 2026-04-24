@@ -1,37 +1,21 @@
 import { redirect } from "react-router";
+import { getRouteConfig } from "../config/routeDefinitions";
 import { getSupabaseClient } from "../../api/supabaseClient";
-
-const PUBLIC_PATHS = new Set(["/login", "/register"]);
-
-function normalizeAppPath(pathname: string) {
-  const basePath = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
-
-  if (basePath && basePath !== "/" && pathname.startsWith(basePath)) {
-    const stripped = pathname.slice(basePath.length);
-    return stripped || "/";
-  }
-
-  return pathname;
-}
-
-function isPublicPath(pathname: string) {
-  return PUBLIC_PATHS.has(normalizeAppPath(pathname));
-}
 
 export async function authGuardMiddleware({ request }: { request: Request }) {
   const pathname = new URL(request.url).pathname;
-  const isPublic = isPublicPath(pathname);
+  const routeConfig = getRouteConfig(pathname);
 
   const supabase = getSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (isPublic && user) {
+  if (routeConfig.onlyGuests && user) {
     throw redirect("/");
   }
 
-  if (!isPublic && !user) {
+  if (routeConfig.authRequired && !user) {
     throw redirect("/login");
   }
 }
