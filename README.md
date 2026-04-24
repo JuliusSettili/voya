@@ -1,87 +1,31 @@
-# Welcome to React Router!
+# Voya
 
-A modern, production-ready template for building full-stack React applications using React Router.
+Kurz-Anleitung für lokale Entwicklung und GitHub-Pages-Deployment.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Lokal entwickeln
 
-## Features
-
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
-
-## Getting Started
-
-### Installation
-
-Install the dependencies:
+Voraussetzung: Node.js 20.9 oder neuer.
 
 ```bash
 npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+App im Browser öffnen:
+http://localhost:3000
 
-## Building for Production
+## GitHub Pages Deployment (manuell)
 
-Create a production build:
+Das Deployment wird nicht automatisch bei Push ausgeführt.
 
-```bash
-npm run build
-```
+So startest du ein Deployment per Button:
 
-## Deployment
+1. GitHub Repository öffnen.
+2. Tab Actions öffnen.
+3. Workflow 'Deploy React Router to GitHub Pages' auswählen.
+4. Run workflow klicken.
 
-### Docker Deployment
+Der Workflow liegt in .github/workflows/deploy.yml und nutzt workflow_dispatch.
 
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+GitHub Pages URL:
+https://juliussettili.github.io/voya/
