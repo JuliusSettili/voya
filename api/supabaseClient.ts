@@ -4,6 +4,12 @@ import { supabaseAnonKey, supabaseUrl } from "../config/supabaseConfig";
 export type Country = {
   id: number;
   name: string;
+  code: string;
+};
+
+export type Profile = {
+  id: number;
+  display_name: string;
 };
 
 export type Post = {
@@ -12,6 +18,7 @@ export type Post = {
   description: string;
   title_image_url: string;
   countries: Country[];
+  profiles: Profile;
 };
 
 export type Database = {

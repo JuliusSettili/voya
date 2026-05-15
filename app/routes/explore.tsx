@@ -1,4 +1,4 @@
-import Card from "~/components/Card";
+import PostCard from "~/components/PostCard";
 import { fetchPosts } from "../../api/posts";
 import type { Route } from "./+types/explore";
 
@@ -23,15 +23,16 @@ export default function Explore({
                 {posts.length === 0 ? (
                     <p>Keine Posts gefunden.</p>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {posts.map((post) => (
-                            <Card
+                            <PostCard
                                 key={post.id}
                                 title={post.title}
                                 description={post.description}
                                 imageUrl={post.title_image_url}
                                 link={`/post/${post.id}`}
-                                tags={post.countries.map((country) => country.name)}
+                                profile={post.profiles}
+                                countries={post.countries}
                             />
                         ))}
                     </div>
