@@ -28,7 +28,7 @@ export default function LoginPage() {
     }
 
     return (
-            <div className="min-h-screen d-grid place-content-center p-4 place-items-center">
+            <div className="min-h-screen grid place-content-center p-4 place-items-center">
             <form onSubmit={handleSubmit}>
                 {error ? <div role="alert" className="alert alert-error mb-5">
                     <span>{error}</span>
