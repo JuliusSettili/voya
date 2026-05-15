@@ -1,28 +1,15 @@
 import Card from "~/components/Card";
 import { fetchPosts } from "../../api/posts";
-import { useEffect, useState } from "react";
-import type { Post } from "../../api/supabaseClient";
+import type { Route } from "./+types/explore";
 
-export default function Explore() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState(true);
+export async function clientLoader() {
+  return await fetchPosts();
+}
+
+export default function Explore({
+    loaderData: posts,
+}: Route.ComponentProps) {
     
-    useEffect(() => {
-        async function loadPosts() {
-            try {
-                const res = await fetchPosts();
-                setPosts(res);
-                console.log(res);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadPosts();
-    }, []);
-
     return (
         <main className="p-8">
             <div className="mb-8">
@@ -33,9 +20,7 @@ export default function Explore() {
                     Hier kannst du neue Reiseziele entdecken, die von anderen Nutzern geteilt wurden.
                 </h2>
             </div>
-                {loading ? (
-                    <p>Lade...</p>
-                ) : posts.length === 0 ? (
+                {posts.length === 0 ? (
                     <p>Keine Posts gefunden.</p>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -45,6 +30,7 @@ export default function Explore() {
                                 title={post.title}
                                 description={post.description}
                                 imageUrl={post.title_image_url}
+                                link={`/post/${post.id}`}
                                 tags={post.countries.map((country) => country.name)}
                             />
                         ))}
