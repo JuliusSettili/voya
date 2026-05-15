@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import type { Route } from "./+types/default";
+import type { Route } from "./+types/auth";
 import { guestGuardMiddleware } from "~/middleware/auth";
 
 export const clientMiddleware: Route.ClientMiddlewareFunction[] = [
