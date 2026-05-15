@@ -29,7 +29,7 @@ export default function PostCard(props: {
                 <div className="card-actions justify-between items-center">
                     <Link to={`/user/${profile.id}`}>@{profile.display_name}</Link>
                     {countries.map((country) => (
-                        <ReactCountryFlag countryCode={country.code} svg />
+                        <ReactCountryFlag key={country.code} countryCode={country.code} svg />
                     ))}
                 </div>
             </div>
