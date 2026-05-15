@@ -6,10 +6,6 @@ type InputFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
     type?: 'text' | 'password' | 'email';
     error?: string;
     icon?: ReactNode;
-    containerClassName?: string;
-    labelClassName?: string;
-    inputClassName?: string;
-    errorClassName?: string;
 };
 
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(function InputField(
@@ -20,10 +16,6 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(function InputF
         icon,
         id,
         required,
-        containerClassName,
-        labelClassName,
-        inputClassName,
-        errorClassName,
         ...inputProps
     },
     ref,
@@ -37,16 +29,26 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(function InputF
     const describedBy = [existingDescribedBy, error ? errorId : undefined].filter(Boolean).join(' ') || undefined;
 
     return (
-        <><label className="label" htmlFor={inputId}>
-            {label}
-        </label><input
+            <><label htmlFor={inputId} className="label">
+                {label}
+            </label>
+            <input
+                ref={ref}
                 id={inputId}
-                name={inputProps.name}
                 type={type}
-                className="input"
-                placeholder={inputProps.placeholder}
                 required={required}
-                disabled={inputProps.disabled} /></>
+                aria-invalid={error ? true : undefined}
+                aria-describedby={describedBy}
+                className="input"
+                {...inputProps}
+            />
+            {
+            error ? (
+                <div id={errorId} role="alert" className="validator-hint">
+                    {error}
+                </div>
+            ) : null
+        }</>
     );
 });
 
