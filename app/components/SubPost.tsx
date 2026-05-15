@@ -1,7 +1,8 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import type { SubPost as SubPostType, SubPostImage } from "../../api/supabaseClient";
 
-export function SubPost({ subPost, containerClass }: { subPost: any; containerClass: string }) {
+export function SubPost({ subPost, containerClass }: { subPost: SubPostType; containerClass: string }) {
   return (
     <details className={`collapse collapse-arrow bg-base-100 border border-base-300 ${containerClass}`} name="my-accordion-det-1">
       <summary className="collapse-title font-semibold">{subPost.title}</summary>
@@ -24,7 +25,7 @@ export function SubPost({ subPost, containerClass }: { subPost: any; containerCl
             },
           }}
           >
-            {subPost.sub_post_images.map((image: any) => (
+            {subPost.sub_post_images.map((image: SubPostImage) => (
               <SwiperSlide key={image.id}>
                 <img src={image.image_url} alt={`Sub post image ${image.id}`} />
               </SwiperSlide>
