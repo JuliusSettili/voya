@@ -12,6 +12,18 @@ export type Profile = {
   display_name: string;
 };
 
+export type SubPostImage = {
+  id: number;
+  image_url: string;
+}
+
+export type SubPost = {
+  id: number;
+  title: string;
+  content: string;
+  sub_post_images: SubPostImage[];
+}
+
 export type Post = {
   id: number;
   title: string;
@@ -19,6 +31,7 @@ export type Post = {
   title_image_url: string;
   countries: Country[];
   profiles: Profile;
+  sub_posts: SubPost[];
 };
 
 export type Database = {
