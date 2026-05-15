@@ -6,7 +6,7 @@ export const clientMiddleware: Route.ClientMiddlewareFunction[] = [
   guestGuardMiddleware,
 ];
 
-export default function DefaultLayout() {
+export default function AuthLayout() {
   return (
     <>
       <Outlet />
