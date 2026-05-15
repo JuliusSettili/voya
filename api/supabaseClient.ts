@@ -6,6 +6,14 @@ export type Country = {
   name: string;
 };
 
+export type Post = {
+  id: number;
+  title: string;
+  description: string;
+  title_image_url: string;
+  countries: Country[];
+};
+
 export type Database = {
   public: {
     Tables: {
