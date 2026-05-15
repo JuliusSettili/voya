@@ -10,7 +10,7 @@ export async function clientLoader({
   return await fetchPost(params.id);
 }
 
-export default function CountriesPage({
+export default function PostPage({
   loaderData: post,
 }: Route.ComponentProps) {
 
