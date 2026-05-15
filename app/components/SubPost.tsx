@@ -7,7 +7,7 @@ export function SubPost({ subPost, containerClass }: { subPost: any; containerCl
       <summary className="collapse-title font-semibold">{subPost.title}</summary>
       <div className="collapse-content text-sm">
         <div className="mb-5">{subPost.content}</div>
-        {subPost.sub_post_images.length == 1 ? (
+        {subPost.sub_post_images.length === 1 ? (
           <img src={subPost.sub_post_images[0].image_url} alt={`Sub post image ${subPost.sub_post_images[0].id}`} />
         ) : (
           <Swiper

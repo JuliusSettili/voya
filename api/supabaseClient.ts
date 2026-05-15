@@ -31,7 +31,7 @@ export type Post = {
   title_image_url: string;
   countries: Country[];
   profiles: Profile;
-  sub_posts: SubPost[];
+  sub_posts?: SubPost[];
 };
 
 export type Database = {
