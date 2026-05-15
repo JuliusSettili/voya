@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Link, useFetcher } from 'react-router'
 import { signup } from '../../api/signup'
 import InputField from '../components/InputField'
