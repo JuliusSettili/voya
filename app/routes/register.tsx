@@ -76,7 +76,7 @@ export default function RegisterPage() {
 
                     <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                         <legend className="fieldset-legend">Konto erstellen</legend>
-
+                        <p className='mb-3'>Tritt uns bei und starte noch heute!</p>
                         <InputField
                             type="text"
                             id="displayName"
