@@ -4,6 +4,34 @@ import { supabaseAnonKey, supabaseUrl } from "../config/supabaseConfig";
 export type Country = {
   id: number;
   name: string;
+  code: string;
+};
+
+export type Profile = {
+  id: number;
+  display_name: string;
+};
+
+export type SubPostImage = {
+  id: number;
+  image_url: string;
+}
+
+export type SubPost = {
+  id: number;
+  title: string;
+  content: string;
+  sub_post_images: SubPostImage[];
+}
+
+export type Post = {
+  id: number;
+  title: string;
+  description: string;
+  title_image_url: string;
+  countries: Country[];
+  profiles: Profile;
+  sub_posts?: SubPost[];
 };
 
 export type Database = {

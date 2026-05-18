@@ -7,7 +7,7 @@ import { getSupabaseClient } from '../../api/supabaseClient';
 export default function Navbar() {
     const navigate = useNavigate();
     const [user, setUser] = useState<User | null>(null);
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [,setIsLoggingOut] = useState(false);
 
     useEffect(() => {
         const supabase = getSupabaseClient();
@@ -46,44 +46,38 @@ export default function Navbar() {
     }
 
     return (
-        <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-100 bg-white">
-            <Link to="/" className="text-2xl font-bold text-blue-600">
-                Voya
-            </Link>
-
-            <div className="flex items-center space-x-6">
-                <Link to="/explore" className="text-gray-600 hover:text-gray-900 transition-colors">
-                    Entdecken
+        <div className="navbar bg-base-100 shadow-sm">
+            <div className="flex-1">
+                <Link to="/" className="btn btn-ghost text-xl">
+                    Voya
                 </Link>
-
-                {user ? (
-                    <div className="flex items-center space-x-4">
-                        <span className="text-sm font-medium text-gray-700">
-                            Hallo {user.user_metadata?.display_name || user.email} !
-                        </span>
-                        <button
-                            type="button"
-                            onClick={handleLogout}
-                            disabled={isLoggingOut}
-                            className="text-sm text-red-600 hover:text-red-800 font-medium disabled:opacity-60"
-                        >
-                            {isLoggingOut ? 'Abmelden...' : 'Abmelden'}
-                        </button>
-                    </div>
-                ) : (
-                    <div className="flex items-center space-x-4">
-                        <Link to="/login" className="text-gray-600 hover:text-gray-900 font-medium">
-                            Login
-                        </Link>
-                        <Link
-                            to="/register"
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium transition-all"
-                        >
-                            Registrieren
-                        </Link>
-                    </div>
-                )}
             </div>
-        </nav>
+            <div className="flex-none">
+                <ul className="menu menu-horizontal px-1">
+                <li>
+                    <Link to="/explore">
+                        Entdecken
+                    </Link>
+                </li>
+                <li>
+                    <details>
+                    <summary>{user?.user_metadata?.display_name}</summary>
+                    <ul className="bg-base-100 rounded-t-none p-2">
+                        <li><a>Link 1</a></li>
+                        <li><a>Link 2</a></li>
+                        <li>
+                            <button
+                                type="button"
+                                onClick={handleLogout}
+                            >
+                                Abmelden
+                            </button>
+                        </li> 
+                    </ul>
+                    </details>
+                </li>
+                </ul>
+            </div>
+        </div>
     );
 }

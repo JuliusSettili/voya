@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { login } from '../../api/login';
-import InputField from '../components/InputField';
+import InputField from '~/components/InputField';
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function LoginPage() {
         setIsSubmitting(false);
 
         if (!result.success) {
-            setError(result.error ?? 'Falsche E-Mail oder Passwort');
+            setError('Falsche E-Mail oder Passwort');
             return;
         }
 
@@ -28,62 +28,45 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+            <div className="min-h-screen grid place-content-center p-4 place-items-center">
+            <form onSubmit={handleSubmit}>
+                {error ? <div role="alert" className="alert alert-error mb-5">
+                    <span>{error}</span>
+                </div> : null}
 
-            {/* Zentrierter Login-Bereich */}
-            <div className="flex-1 flex items-center justify-center p-4">
-                <div className="bg-white p-8 md:p-10 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+                <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+                    <legend className="fieldset-legend">Login</legend>
 
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Willkommen zurück</h1>
-                    <p className="text-gray-500 mb-6 text-sm">Bitte melde dich mit deinen Daten an.</p>
+                    <InputField
+                        type="email"
+                        id="email"
+                        name="email"
+                        label="E-Mail Adresse"
+                        required
+                        disabled={isSubmitting}
+                    />
 
-                    {/* Fehleranzeige */}
-                    {error && (
-                        <div className="mb-6 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded">
-                            {error}
-                        </div>
-                    )}
+                    <InputField
+                        type="password"
+                        id="password"
+                        name="password"
+                        label="Passwort"
+                        required
+                        disabled={isSubmitting}
+                    />
 
-                    {/* Formular */}
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <InputField
-                            type="email"
-                            id="email"
-                            name="email"
-                            label="E-Mail Adresse"
-                            placeholder="beispiel@email.com"
-                            required
-                        />
+                    <button className="btn btn-neutral mt-4" type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? 'Login...' : 'Login'}
+                    </button>
 
-                        <InputField
-                            type="password"
-                            id="password"
-                            name="password"
-                            label="Passwort"
-                            placeholder="••••••••"
-                            required
-                        />
-
-                        <div className="flex justify-end pt-4">
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lga w-100 active:transform active:scale-95"
-                            >
-                                {isSubmitting ? 'Einloggen...' : 'Einloggen'}
-                            </button>
-                        </div>
-
-                        <p className="text-sm text-gray-600 text-center">
-                            Noch kein Konto?{' '}
-                            <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
-                                Jetzt registrieren
-                            </Link>
-                        </p>
-                    </form>
-
-                </div>
-            </div>
+                    <p style={{ marginTop: '0.75rem' }}>
+                        Noch kein Konto?{' '}
+                        <Link to="/register" style={{ textDecoration: 'underline' }}>
+                            Jetzt registrieren
+                        </Link>
+                    </p>
+                </fieldset>
+            </form>
         </div>
     );
 }

@@ -54,111 +54,84 @@ export default function RegisterPage() {
     const isSubmitting = fetcher.state === 'submitting'
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col relative font-sans">
-
-            {/* Zentrierter Registrierungs-Bereich */}
-            <div className="flex-1 flex items-center justify-center p-4">
-                <div className="bg-white p-8 md:p-10 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
-
-                    {isSuccessful ? (
-                        <>
-                            <h1 className="text-3xl font-bold text-gray-800 mb-2">✓ Erfolgreich registriert!</h1>
-                            <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                                Dein Konto wurde erfolgreich erstellt. Bitte überprüfe deine E-Mail-Adresse <strong>{data.email}</strong> und bestätige die E-Mail, um dein Konto zu aktivieren.
-                            </p>
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                                <p className="text-sm text-blue-800">
-                                    💡 <strong>Hinweis:</strong> Wenn du die E-Mail nicht erhalten hast, überprüfe auch deinen Spam-Ordner oder fordere eine neue Bestätigungsmail an.
-                                </p>
-                            </div>
-                            <Link
-                                to="/login"
-                                className="w-full inline-flex justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-                            >
-                                Zur Anmeldung
-                            </Link>
-                        </>
-                    ) : (
-                        <>
-                            <h1 className="text-3xl font-bold text-gray-800 mb-2">Konto erstellen</h1>
-                            <p className="text-gray-500 mb-8 text-sm">Tritt uns bei und starte noch heute.</p>
-
-                            {errors.general && (
-                                <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
-                                    <p className="text-sm text-red-700">{errors.general}</p>
-                                </div>
-                            )}
-
-                            <fetcher.Form method="post" className="space-y-5">
-                                <InputField
-                                    type="text"
-                                    id="displayName"
-                                    name="displayName"
-                                    label="Anzeigename"
-                                    placeholder="Max Mustermann"
-                                    required
-                                    disabled={isSubmitting}
-                                    error={errors.displayName}
-                                />
-
-                                <InputField
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    label="E-Mail Adresse"
-                                    placeholder="beispiel@email.com"
-                                    required
-                                    disabled={isSubmitting}
-                                    error={errors.email}
-                                />
-
-                                <InputField
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    label="Passwort"
-                                    placeholder="••••••••"
-                                    required
-                                    minLength={8}
-                                    disabled={isSubmitting}
-                                    error={errors.password}
-                                />
-
-                                <InputField
-                                    type="password"
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    label="Passwort bestätigen"
-                                    placeholder="••••••••"
-                                    required
-                                    minLength={8}
-                                    disabled={isSubmitting}
-                                    error={errors.confirmPassword}
-                                />
-
-                                {/* Button */}
-                                <div className="flex justify-end pt-4">
-                                    <button
-                                        type="submit"
-                                        disabled={isSubmitting}
-                                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-2.5 px-8 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg active:transform w-100 active:scale-95"
-                                    >
-                                        {isSubmitting ? 'Wird registriert...' : 'Registrieren'}
-                                    </button>
-                                </div>
-
-                                <p className="text-sm text-gray-600 text-center">
-                                    Bereits ein Konto?{' '}
-                                    <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
-                                        Hier einloggen
-                                    </Link>
-                                </p>
-                            </fetcher.Form>
-                        </>
-                    )}
-
+        <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '1rem' }}>
+            {isSuccessful ? (
+                <div>
+                    <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>✓ Erfolgreich registriert!</h1>
+                    <p style={{ color: '#4b5563', marginBottom: '1rem', fontSize: 14 }}>
+                        Dein Konto wurde erfolgreich erstellt. Bitte überprüfe deine E-Mail-Adresse <strong>{data?.email}</strong> und bestätige die E-Mail, um dein Konto zu aktivieren.
+                    </p>
+                    <div style={{ background: '#ebf8ff', border: '1px solid #bfdbfe', borderRadius: 8, padding: '1rem', marginBottom: '1rem' }}>
+                        <p style={{ fontSize: 14, color: '#1e3a8a' }}>
+                            💡 <strong>Hinweis:</strong> Wenn du die E-Mail nicht erhalten hast, überprüfe auch deinen Spam-Ordner oder fordere eine neue Bestätigungsmail an.
+                        </p>
+                    </div>
+                    <Link to="/login" style={{ display: 'inline-flex', justifyContent: 'center', background: '#2563eb', color: 'white', fontWeight: 600, padding: '10px 24px', borderRadius: 8, textDecoration: 'none' }}>
+                        Zur Anmeldung
+                    </Link>
                 </div>
-            </div>
+            ) : (
+                <fetcher.Form method="post">
+                    {errors.general && <p role="alert" style={{ marginBottom: '0.75rem', color: '#b91c1c' }}>{errors.general}</p>}
+
+                    <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+                        <legend className="fieldset-legend">Konto erstellen</legend>
+
+                        <InputField
+                            type="text"
+                            id="displayName"
+                            name="displayName"
+                            label="Anzeigename"
+                            required
+                            disabled={isSubmitting}
+                            error={errors.displayName}
+                        />
+
+                        <InputField
+                            type="email"
+                            id="email"
+                            name="email"
+                            label="E-Mail Adresse"
+                            required
+                            disabled={isSubmitting}
+                            error={errors.email}
+                        />
+
+                        <InputField
+                            type="password"
+                            id="password"
+                            name="password"
+                            label="Passwort"
+                            required
+                            minLength={8}
+                            disabled={isSubmitting}
+                            error={errors.password}
+                        />
+
+                        <InputField
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            label="Passwort bestätigen"
+                            required
+                            minLength={8}
+                            disabled={isSubmitting}
+                            error={errors.confirmPassword}
+                        />
+
+                        <button type="submit" className="btn btn-neutral mt-4" disabled={isSubmitting} style={{ width: '100%' }}>
+                            {isSubmitting ? 'Wird registriert...' : 'Registrieren'}
+                        </button>
+
+                        <p style={{ marginTop: '0.75rem', fontSize: 14 }}>
+                            Bereits ein Konto?{' '}
+                            <Link to="/login" style={{ textDecoration: 'underline' }}>
+                                Hier einloggen
+                            </Link>
+                        </p>
+                    </fieldset>
+                </fetcher.Form>
+            )}
         </div>
     );
 }

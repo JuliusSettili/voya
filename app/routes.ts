@@ -1,10 +1,15 @@
-import { type RouteConfig, index, route } from "@react-router/dev/routes";
-import { APP_ROUTE_DEFINITIONS } from "./config/routeDefinitions";
+import { type RouteConfig, index, layout, route } from "@react-router/dev/routes";
 
-export default APP_ROUTE_DEFINITIONS.map((definition) => {
-  if (definition.index) {
-    return index(definition.file);
-  }
-
-  return route(definition.path.replace(/^\//, ""), definition.file);
-}) satisfies RouteConfig;
+export default [
+  route("404", "./routes/notFound.tsx"),
+  layout("./layouts/auth.tsx", [
+    route("login", "./routes/login.tsx"),
+    route("register", "./routes/register.tsx"),
+  ]),
+  layout("./layouts/default.tsx", [
+    index("./routes/home.tsx"),
+    route("explore", "./routes/explore.tsx"),
+    route("countries", "./routes/countries.tsx"),
+    route("post/:id", "./routes/post.tsx"),
+  ]),
+] satisfies RouteConfig;

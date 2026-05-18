@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@plugin "daisyui";
+@import 'swiper/css';
+@import 'swiper/css/navigation';
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
