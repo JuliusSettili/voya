@@ -17,7 +17,7 @@ export async function guestGuardMiddleware() {
   }
 }
 
-async function getUser() {
+export async function getUser() {
   const supabase = getSupabaseClient();
   const {
     data: { user },
