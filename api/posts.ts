@@ -1,5 +1,6 @@
 import { getSupabaseClient } from "./supabaseClient";
 import type { Post } from "./supabaseClient";
+import { getUser } from "./auth";
 
 export async function fetchPosts(): Promise<Post[]> {
   const supabase = getSupabaseClient();
@@ -28,4 +29,14 @@ export async function fetchPost(id: string): Promise<Post> {
   }
 
   return data as Post;
+}
+
+export async function postBelongsToCurrentUser(post: Post): Promise<boolean> {
+  const user = await getUser();
+
+  if (!user?.id) {
+    return false;
+  }
+
+  return post.profiles.id === user.id;
 }

@@ -1,5 +1,5 @@
 import { redirect } from "react-router";
-import { getSupabaseClient } from "../../api/supabaseClient";
+import { getUser } from "../../api/auth";
 
 export async function authGuardMiddleware() {
   const user = await getUser();
@@ -15,12 +15,4 @@ export async function guestGuardMiddleware() {
   if (user) {
     throw redirect("/");
   }
-}
-
-async function getUser() {
-  const supabase = getSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
 }

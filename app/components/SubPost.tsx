@@ -1,11 +1,40 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import { MdDeleteOutline } from "react-icons/md";
+import type { MouseEvent } from "react";
 import type { SubPost as SubPostType, SubPostImage } from "../../api/supabaseClient";
 
-export function SubPost({ subPost, containerClass }: { subPost: SubPostType; containerClass: string }) {
+export function SubPost({
+  subPost,
+  containerClass,
+  onDelete,
+}: {
+  subPost: SubPostType;
+  containerClass: string;
+  onDelete?: (id: number) => void;
+}) {
+  const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDelete?.(subPost.id);
+  };
+
   return (
     <details className={`collapse collapse-arrow bg-base-100 border border-base-300 ${containerClass}`} name="my-accordion-det-1">
-      <summary className="collapse-title font-semibold">{subPost.title}</summary>
+      <summary className="collapse-title font-semibold flex items-center justify-between">
+        <span>{subPost.title}</span>
+        {onDelete ? (
+          <button
+            type="button"
+            onClick={handleDelete}
+            aria-label="Löschen"
+            className="btn btn-square btn-error btn-sm ml-2"
+            title="Löschen"
+          >
+            <MdDeleteOutline size={16} />
+          </button>
+        ) : null}
+      </summary>
       <div className="collapse-content text-sm">
         <div className="mb-5">{subPost.content}</div>
         {subPost.sub_post_images.length === 1 ? (
