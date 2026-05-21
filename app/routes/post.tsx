@@ -20,6 +20,10 @@ export default function PostPage({
   const [canDeleteSubPosts, setCanDeleteSubPosts] = useState(false);
 
   useEffect(() => {
+    setPostState(post);
+  }, [post]);
+
+  useEffect(() => {
     let isMounted = true;
 
     async function loadOwnership() {
