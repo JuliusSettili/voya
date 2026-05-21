@@ -14,6 +14,7 @@ export function SubPost({
   onDelete?: (id: number) => void;
 }) {
   const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     e.stopPropagation();
     onDelete?.(subPost.id);
   };
@@ -24,6 +25,7 @@ export function SubPost({
         <span>{subPost.title}</span>
         {onDelete ? (
           <button
+            type="button"
             onClick={handleDelete}
             aria-label="Löschen"
             className="btn btn-square btn-error btn-sm ml-2"
