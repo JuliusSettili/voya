@@ -1,6 +1,6 @@
 import { getSupabaseClient } from "./supabaseClient";
 import type { Post } from "./supabaseClient";
-import { getUser } from "../app/middleware/auth";
+import { getUser } from "./auth";
 
 export async function fetchPosts(): Promise<Post[]> {
   const supabase = getSupabaseClient();
