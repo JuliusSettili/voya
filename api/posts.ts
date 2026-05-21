@@ -38,5 +38,5 @@ export async function postBelongsToCurrentUser(post: Post): Promise<boolean> {
     return false;
   }
 
-  return String(post.profiles.id) === user.id;
+  return post.profiles.id === user.id;
 }

@@ -8,7 +8,7 @@ export type Country = {
 };
 
 export type Profile = {
-  id: number;
+  id: string;
   display_name: string;
 };
 
