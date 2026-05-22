@@ -1,4 +1,4 @@
-import { fetchProfile } from "../../api/auth";
+import { fetchProfile } from "../../api/profile";
 import type { Route } from "./+types/profile";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
