@@ -27,7 +27,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function ProfilePage({ loaderData }: Route.ComponentProps) {
-  const { profile, posts } = loaderData as Awaited<ReturnType<typeof clientLoader>>;
+  const { profile, posts } = loaderData;
 
   return (
     <main className="p-8">

@@ -21,7 +21,7 @@ export async function fetchPostsByProfileId(profileId: string): Promise<Post[]> 
   const { data, error } = await supabase
     .from("posts")
     .select("id, title, description, title_image_url, countries (id, name, code), profiles (id, display_name)")
-    .eq("profiles.id", profileId)
+    .eq("user_id", profileId)
     .order("created_at", { ascending: true });
 
   if (error) {
