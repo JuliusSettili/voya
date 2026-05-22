@@ -63,8 +63,7 @@ export default function Navbar() {
                     <details>
                     <summary>{user?.user_metadata?.display_name}</summary>
                     <ul className="bg-base-100 rounded-t-none p-2">
-                        <li><a>Link 1</a></li>
-                        <li><a>Link 2</a></li>
+                        <li><Link to={`/profile/${user?.id}`}>Profil</Link></li>
                         <li>
                             <button
                                 type="button"
