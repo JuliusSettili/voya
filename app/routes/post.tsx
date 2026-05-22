@@ -1,6 +1,6 @@
 import type { Route } from "./+types/post";
 import { fetchPost } from "../../api/posts";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { Link } from "react-router";
 import { SubPost } from "~/components/SubPost";

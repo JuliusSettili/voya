@@ -31,6 +31,16 @@ export async function fetchPost(id: string): Promise<Post> {
   return data as Post;
 }
 
+export async function deletePost(id: string): Promise<void> {
+  const supabase = getSupabaseClient();
+
+  let { error } = await supabase.from("posts").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
 export async function postBelongsToCurrentUser(post: Post): Promise<boolean> {
   const user = await getUser();
 
