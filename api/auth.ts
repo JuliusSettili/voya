@@ -1,5 +1,10 @@
 import { getSupabaseClient } from "./supabaseClient";
 
+export type AuthProfile = {
+  id: string;
+  display_name: string;
+};
+
 export async function getUser() {
   const supabase = getSupabaseClient();
   const {
@@ -9,7 +14,7 @@ export async function getUser() {
   return user;
 }
 
-export async function fetchProfile(id: string) {
+export async function fetchProfile(id: string): Promise<AuthProfile> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("profiles")
@@ -21,5 +26,5 @@ export async function fetchProfile(id: string) {
     throw new Error(error.message);
   }
 
-  return data;
+  return data as AuthProfile;
 }

@@ -1,6 +1,6 @@
-import PostCard from "~/components/PostCard";
 import { fetchPosts, deletePost } from "../../api/posts";
 import type { Route } from "./+types/explore";
+import PostList from "~/components/PostList";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -42,24 +42,7 @@ export default function Explore({
                     Hier kannst du neue Reiseziele entdecken, die von anderen Nutzern geteilt wurden.
                 </h2>
             </div>
-                {posts.length === 0 ? (
-                    <p>Keine Posts gefunden.</p>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {posts.map((post) => (
-                            <PostCard
-                                key={post.id}
-                                title={post.title}
-                                description={post.description}
-                                imageUrl={post.title_image_url}
-                                link={`/post/${post.id}`}
-                                profile={post.profiles}
-                                countries={post.countries}
-                                postId={post.id}
-                            />
-                        ))}
-                    </div>
-                )}
+            <PostList posts={posts} />
         </main>
     );
 }
