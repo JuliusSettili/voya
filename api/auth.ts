@@ -13,18 +13,3 @@ export async function getUser() {
 
   return user;
 }
-
-export async function fetchProfile(id: string): Promise<AuthProfile> {
-  const supabase = getSupabaseClient();
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id, display_name")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data as AuthProfile;
-}

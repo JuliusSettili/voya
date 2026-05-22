@@ -1,4 +1,4 @@
-import { fetchProfile } from "../../api/auth";
+import { fetchProfile } from "../../api/profile";
 import { deletePost, fetchPostsByProfileId } from "../../api/posts";
 import type { Route } from "./+types/profile";
 import PostList from "~/components/PostList";
