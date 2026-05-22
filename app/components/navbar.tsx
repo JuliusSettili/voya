@@ -60,21 +60,24 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li>
-                    <details>
-                    <summary>{user?.user_metadata?.display_name}</summary>
-                    <ul className="bg-base-100 rounded-t-none p-2">
-                        <li><a>Link 1</a></li>
-                        <li><a>Link 2</a></li>
-                        <li>
-                            <button
-                                type="button"
-                                onClick={handleLogout}
-                            >
-                                Abmelden
-                            </button>
-                        </li> 
-                    </ul>
-                    </details>
+                    {user?.id ? (
+                        <details>
+                        <summary>{user.user_metadata?.display_name ?? 'Account'}</summary>
+                        <ul className="bg-base-100 rounded-t-none p-2">
+                            <li><Link to={`/profile/${user.id}`}>Profil</Link></li>
+                            <li>
+                                <button
+                                    type="button"
+                                    onClick={handleLogout}
+                                >
+                                    Abmelden
+                                </button>
+                            </li> 
+                        </ul>
+                        </details>
+                    ) : (
+                        <span className="px-3 py-2 text-sm text-gray-500">Account</span>
+                    )}
                 </li>
                 </ul>
             </div>
