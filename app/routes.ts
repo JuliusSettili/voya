@@ -7,8 +7,7 @@ export default [
     route("register", "./routes/register.tsx"),
   ]),
   layout("./layouts/default.tsx", [
-    index("./routes/home.tsx"),
-    route("explore", "./routes/explore.tsx"),
+    index("./routes/explore.tsx"),
     route("countries", "./routes/countries.tsx"),
     route("post/:id", "./routes/post.tsx"),
   ]),

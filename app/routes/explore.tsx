@@ -2,6 +2,13 @@ import PostCard from "~/components/PostCard";
 import { fetchPosts } from "../../api/posts";
 import type { Route } from "./+types/explore";
 
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Voya" },
+    { name: "description", content: "Welcome to Voya!" },
+  ];
+}
+
 export async function clientLoader() {
   return await fetchPosts();
 }
