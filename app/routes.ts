@@ -10,6 +10,7 @@ export default [
     index("./routes/explore.tsx"),
     route("countries", "./routes/countries.tsx"),
     route("post/:id", "./routes/post.tsx"),
+    route("nutzerverwaltung", "./routes/nutzerverwaltung.tsx"),
     route("profile/:id", "./routes/profile.tsx"),
     route("new-post", "./routes/new-post.tsx"),
   ]),
