@@ -7,9 +7,24 @@ export type Country = {
   code: string;
 };
 
+export type BlockedUser = {
+  id: string;
+  block_text: string;
+}
+
+export type Role = {
+  id: number;
+  name: string;
+};
+
 export type Profile = {
   id: string;
   display_name: string;
+  email: string;
+  blocked: boolean;
+  role_id: number;
+  roles: Role;
+  blocked_users: BlockedUser;
 };
 
 export type SubPostImage = {
