@@ -48,6 +48,35 @@ export type Database = {
           name?: string;
         };
       };
+      posts: {
+        Row: Post;
+        Insert: {
+          title: string;
+          description: string;
+          title_image_url?: string;
+          profile_id?: string;
+          is_private?: boolean;
+        };
+        Update: {
+          id?: number;
+          title?: string;
+          description?: string;
+          title_image_url?: string;
+          profile_id?: string;
+          is_private?: boolean;
+        };
+      };
+      profiles: {
+        Row: Profile;
+        Insert: {
+          id: string;
+          display_name: string;
+        };
+        Update: {
+          id?: string;
+          display_name?: string;
+        };
+      };
     };
   };
 };
