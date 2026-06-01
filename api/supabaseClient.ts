@@ -90,6 +90,17 @@ export type Database = {
           post_id?: number;
         };
       };
+      sub_post_images: {
+        Row: SubPostImage;
+        Insert: {
+          image_url: string;
+          subpost_id: number;
+        };
+        Update: {
+          image_url?: string;
+          subpost_id?: number;
+        };
+      };
     };
   };
 };
