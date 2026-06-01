@@ -55,6 +55,11 @@ export default function Navbar() {
             <div className="flex-none">
                 <ul className="menu menu-horizontal px-1">
                 <li>
+                    <Link to="/">
+                        Entdecken
+                    </Link>
+                </li>
+                <li>
                     <Link to="/new-post">
                         Post erstellen
                     </Link>
