@@ -31,10 +31,11 @@ export default function CountriesInput({ value, onChange }: CountriesInputProps)
 
   const toggleCountry = (countryId: number) => {
     onChange(
-      value.includes(countryId)
-        ? value.filter((id) => id !== countryId)
-        : [...value, countryId],
+        value.includes(countryId)
+            ? value.filter((id) => id !== countryId)
+            : [...value, countryId],
     );
+    setSearch("");
   };
 
   const selectedCountries = countries.filter((country) => value.includes(country.id));
@@ -54,56 +55,58 @@ export default function CountriesInput({ value, onChange }: CountriesInputProps)
   }, [countries, search]);
 
   return (
-    <div className="space-y-3">
-      {selectedCountries.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
+      <div className="space-y-3">
+        <div className="input input-bordered w-full flex items-center gap-2 overflow-x-auto flex-nowrap cursor-text [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+
           {selectedCountries.map((country) => (
-            <button
-              key={country.id}
-              type="button"
-              onClick={() => toggleCountry(country.id)}
-              className="badge badge-primary badge-lg flex items-center gap-2"
-              aria-pressed="true"
-            >
-              <ReactCountryFlag countryCode={country.code} svg />
-              <span>{country.name}</span>
-            </button>
+              <button
+                  key={country.id}
+                  type="button"
+                  onClick={() => toggleCountry(country.id)}
+                  className="badge badge-primary badge-lg flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
+                  title={`${country.name} entfernen`}
+              >
+                <ReactCountryFlag countryCode={country.code} svg />
+                <span className="whitespace-nowrap">{country.name}</span>
+                <span className="text-xs ml-1 opacity-60">✕</span>
+              </button>
           ))}
+
+          <input
+              type="text"
+              className="grow bg-transparent outline-none border-none min-w-[150px] shrink-0"
+              placeholder={selectedCountries.length === 0 ? "Länder suchen..." : ""}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+          />
         </div>
-      ) : null}
 
-      <input
-        type="text"
-        className="input input-bordered w-full"
-        placeholder="Länder suchen..."
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
-      />
+        <div className="flex flex-wrap gap-2">
+          {search.trim().length > 0 && search.trim().length < 3 ? (
+              <p className="text-sm text-base-content/60">Bitte mindestens 3 Zeichen eingeben.</p>
+          ) : search.trim().length >= 3 && filteredCountries.length === 0 ? (
+              <p className="text-sm text-base-content/60">Keine Länder gefunden.</p>
+          ) : (
+              filteredCountries.map((country) => {
+                const selected = value.includes(country.id);
 
-      <div className="flex flex-wrap gap-2">
-        {search.trim().length < 3 ? (
-          <p className="text-sm text-base-content/60">Bitte mindestens 3 Zeichen eingeben.</p>
-        ) : filteredCountries.length === 0 ? (
-          <p className="text-sm text-base-content/60">Keine Länder gefunden.</p>
-        ) : (
-          filteredCountries.map((country) => {
-        const selected = value.includes(country.id);
-
-        return (
-          <button
-            key={country.id}
-            type="button"
-            onClick={() => toggleCountry(country.id)}
-            className={`badge badge-lg flex items-center gap-2 ${selected ? "badge-primary" : "badge-outline"}`}
-            aria-pressed={selected}
-          >
-            <ReactCountryFlag countryCode={country.code} svg />
-            <span>{country.name}</span>
-          </button>
-        );
-          })
-        )}
+                return (
+                    <button
+                        key={country.id}
+                        type="button"
+                        onClick={() => toggleCountry(country.id)}
+                        className={`badge badge-lg flex items-center gap-2 transition-colors hover:badge-primary ${
+                            selected ? "badge-primary" : "badge-outline"
+                        }`}
+                        aria-pressed={selected}
+                    >
+                      <ReactCountryFlag countryCode={country.code} svg />
+                      <span className="whitespace-nowrap">{country.name}</span>
+                    </button>
+                );
+              })
+          )}
+        </div>
       </div>
-    </div>
   );
 }
