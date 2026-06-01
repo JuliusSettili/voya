@@ -2,6 +2,7 @@ import { type RouteConfig, index, layout, route } from "@react-router/dev/routes
 
 export default [
   route("404", "./routes/notFound.tsx"),
+  route("blocked", "./routes/blocked.tsx"),
   layout("./layouts/auth.tsx", [
     route("login", "./routes/login.tsx"),
     route("register", "./routes/register.tsx"),
