@@ -21,8 +21,10 @@ export function SubPost({
 
   return (
     <details className={`collapse collapse-arrow bg-base-100 border border-base-300 ${containerClass}`} name="my-accordion-det-1">
-      <summary className="collapse-title font-semibold flex items-center justify-between">
-        <span>{subPost.title}</span>
+      <summary className="collapse-title flex items-center justify-between gap-2 font-semibold">
+        <span className="min-w-0 flex-1 truncate" title={subPost.title}>
+          {subPost.title}
+        </span>
         {onDelete ? (
           <button
             type="button"

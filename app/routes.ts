@@ -11,5 +11,6 @@ export default [
     route("countries", "./routes/countries.tsx"),
     route("post/:id", "./routes/post.tsx"),
     route("profile/:id", "./routes/profile.tsx"),
+    route("new-post", "./routes/new-post.tsx"),
   ]),
 ] satisfies RouteConfig;

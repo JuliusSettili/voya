@@ -2,6 +2,31 @@ import { getSupabaseClient } from "./supabaseClient";
 import type { Post } from "./supabaseClient";
 import { getUser } from "./auth";
 
+const POST_IMAGES_BUCKET = "Post_Images";
+
+export async function uploadPostImage(file: File): Promise<string> {
+  const supabase = getSupabaseClient();
+  const fileExtension = file.name.split(".").pop() || "jpg";
+  const filePath = `posts/${crypto.randomUUID()}.${fileExtension}`;
+
+  const { error } = await supabase.storage
+    .from(POST_IMAGES_BUCKET)
+    .upload(filePath, file, {
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const { data } = supabase.storage
+    .from(POST_IMAGES_BUCKET)
+    .getPublicUrl(filePath);
+
+  return data.publicUrl;
+}
+
 export async function fetchPosts(): Promise<Post[]> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
@@ -64,4 +89,57 @@ export async function postBelongsToCurrentUser(post: Post): Promise<boolean> {
   }
 
   return post.profiles.id === user.id;
+}
+
+export async function createPost(postData: {
+  title: string;
+  description: string;
+  titleImageUrl: string;
+  countryIds: number[];
+  isPrivate: boolean;
+}): Promise<Post> {
+  const supabase = getSupabaseClient();
+  const user = await getUser();
+  const { title, description, titleImageUrl, countryIds, isPrivate } = postData;
+
+  if (!user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  const { data, error } = await supabase
+    .from("posts")
+    .insert([
+      {
+        title,
+        description,
+        title_image_url: titleImageUrl,
+        is_private: isPrivate,
+      },
+    ] as any)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const createdPost = data as Post;
+
+  if (countryIds.length > 0) {
+    const { error: relationError } = await supabase
+      .from("post_country_relation")
+      .insert(
+        countryIds.map((countryId) => ({
+          post_id: createdPost.id,
+          country_id: countryId,
+        })) as any,
+      );
+
+    if (relationError) {
+      await supabase.from("posts").delete().eq("id", createdPost.id);
+      throw new Error(relationError.message);
+    }
+  }
+
+  return createdPost;
 }

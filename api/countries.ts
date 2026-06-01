@@ -5,7 +5,7 @@ export async function fetchCountries(): Promise<Country[]> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("countries")
-    .select("id, name")
+    .select("id, name, code")
     .order("id", { ascending: true });
 
   if (error) {
