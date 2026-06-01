@@ -1,3 +1,4 @@
+import { fetchFullProfile, fetchProfile } from './profile'
 import { getSupabaseClient } from './supabaseClient'
 
 export type AuthResult = {
@@ -22,6 +23,23 @@ export async function login(formData: FormData): Promise<AuthResult> {
         email,
         password,
     })
+
+    const userId = (await supabase.auth.getUser()).data.user?.id!;
+    console.log('User ID:', userId);
+    const userProfile = await fetchFullProfile(userId);
+    console.log("User Profile:", userProfile);
+    const profileBlocked = userProfile.blocked;
+    console.log('Profile Blocked:', profileBlocked);
+
+    if (profileBlocked) {
+        supabase.auth.signOut().catch((error) => {
+            console.error('Fehler beim Sign-Out:', error);
+        });
+        return {
+            success: false,
+            error: 'Ihr Konto ist gesperrt.',
+        }
+    }
 
     if (error) {
         return {
