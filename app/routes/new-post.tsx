@@ -97,7 +97,6 @@ export default function NewPost() {
             type="file"
             className="hidden"
             id="title-image-upload"
-            name="titleImage"
             accept="image/*"
             onChange={handleTitleImageChange}
           />
