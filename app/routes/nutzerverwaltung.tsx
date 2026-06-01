@@ -1,4 +1,3 @@
-import type { index } from "@react-router/dev/routes";
 import { fetchProfiles, assignRoleToProfile, blockProfile, unblockProfile } from "../../api/profiles";
 import type { Route } from "./+types/nutzerverwaltung";
 import { fetchRoles } from "../../api/roles";
@@ -20,6 +19,7 @@ export default function AdminPage({
   loaderData: { profiles: initialProfiles, roles },
 }: Route.ComponentProps) {
   const [profiles, setProfiles] = useState(initialProfiles);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleBlockToggle = async (profileId: string, shouldBlock: boolean, reason?: string) => {
     if (shouldBlock) {
@@ -32,17 +32,31 @@ export default function AdminPage({
     setProfiles(updatedProfiles);
   };
 
-  const handleRoleChange = async (profileId: string, roleId: string) => {
+  const handleRoleChange = async (profileId: string, roleId: number) => {
     await assignRoleToProfile(profileId, roleId);
     // Refetch profiles to update the table
     const updatedProfiles = await fetchProfiles();
     setProfiles(updatedProfiles);
   };
 
+  const filteredProfiles = profiles.filter((profile) =>
+    profile.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <main className="p-6">
       <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1>
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by display name..."
+          className="input input-bordered w-full max-w-xs"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       <div className="overflow-x-auto">
+        
         <table className="table table-zebra">
             <thead>
             <tr>
@@ -54,7 +68,7 @@ export default function AdminPage({
             </tr>
             </thead>
             <tbody>
-            {profiles.map((profile, index) => (
+            {filteredProfiles.map((profile, index) => (
                 <tr key={profile.id}>
                     <td>{index + 1}</td>
                     <td>{profile.display_name}</td>
