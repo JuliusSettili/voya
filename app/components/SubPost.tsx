@@ -4,7 +4,7 @@ import { MdDeleteOutline, MdAdd } from "react-icons/md";
 import { useState, type MouseEvent } from "react";
 import type { SubPost as SubPostType, SubPostImage } from "../../api/supabaseClient";
 import EditField from "./EditField";
-import { addSubPostImage, getSubPostById, updateSubPost } from "../../api/subposts";
+import { addSubPostImage, deleteSubPostImage, getSubPostById, updateSubPost } from "../../api/subposts";
 import { uploadPostImage } from "../../api/posts";
 
 export function SubPost({
@@ -19,8 +19,7 @@ export function SubPost({
   postBelongsToCurrentUser: boolean;
 }) {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-    const [subPostState, setSubPostState] = useState(subPost);
+  const [subPostState, setSubPostState] = useState(subPost);
 
   const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -36,18 +35,28 @@ export function SubPost({
     updateSubPost(subPost.id, { content: newContent });
   }
 
+  const handleDeleteSubPostImage = async (imageId: number) => {
+    try {
+      await deleteSubPostImage(imageId);
+    } catch (error) {
+      console.error("Failed to delete sub post image", error);
+    } finally {
+      const updatedSubPost = await getSubPostById(subPost.id);
+      setSubPostState(updatedSubPost);
+    }
+  };
+
   const handleEditImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploadingImage(true);
-    setUploadError(null);
 
     try {
       const uploadedImageUrl = await uploadPostImage(file);
       await addSubPostImage(subPost.id, uploadedImageUrl);
     } catch (error) {
-      setUploadError(error instanceof Error ? error.message : "Bild konnte nicht hochgeladen werden.");
+      console.error("Failed to upload sub post image", error);
     } finally {
       setIsUploadingImage(false);
       const updatedSubPost = await getSubPostById(subPost.id);
@@ -93,75 +102,44 @@ export function SubPost({
         {!postBelongsToCurrentUser && (
           <p className="mb-4">{subPostState.content}</p>
         )}
-        {subPost.sub_post_images.length === 1 ? (
-          <div className="flex gap-4">
-            <div className="flex-1/2"><img src={subPostState.sub_post_images[0].image_url} alt={`Sub post image ${subPostState.sub_post_images[0].id}`} /></div>
-            {postBelongsToCurrentUser && (
-              <div className="flex-1/2 flex justify-center items-center">
+        <Swiper
+          spaceBetween={10}
+          slidesPerView={"auto"}
+          navigation={true}
+          modules={[Navigation]}
+        >
+          {subPostState.sub_post_images.map((image: SubPostImage) => (
+            <SwiperSlide key={image.id} style={{ width: "auto" }}>
+              <img className="h-50 relative" src={image.image_url} alt={`Sub post image ${image.id}`} />
+              <button className="btn btn-sm btn-error btn-square absolute top-2 right-2" onClick={() => handleDeleteSubPostImage(image.id)}>
+                <MdDeleteOutline size={16} />
+              </button>
+            </SwiperSlide>
+          ))}
+          {postBelongsToCurrentUser && (
+            <SwiperSlide>
+              <div className="flex h-50 w-50 items-center justify-center">
                 <label
-                  htmlFor="title-image-upload"
+                  htmlFor={`subpost-${subPostState.id}-image-upload`}
                   className="btn btn-outline btn-secondary btn-sm"
                 >
-                  isUploadingImage ? (
+                  {isUploadingImage ? (
                     <span className="loading loading-spinner"></span>
                   ) : (
                     <MdAdd size={16} />
-                  )
+                  )}
                 </label>
                 <input
                   type="file"
                   className="hidden"
-                  id="title-image-upload"
+                  id={`subpost-${subPostState.id}-image-upload`}
                   accept="image/*"
                   onChange={handleEditImage}
                 />
-              </div>)}
-          </div>
-        ) : (
-          <Swiper
-            spaceBetween={10}
-            slidesPerView={1}
-            navigation={true}
-            modules={[Navigation]}
-            breakpoints={{
-              640: {
-                slidesPerView: 2,
-              },
-              768: {
-                slidesPerView: 3,
-              },
-            }}
-          >
-            {subPostState.sub_post_images.map((image: SubPostImage) => (
-              <SwiperSlide key={image.id}>
-                <img className="h-50" src={image.image_url} alt={`Sub post image ${image.id}`} />
-              </SwiperSlide>
-            ))}
-            {postBelongsToCurrentUser && (
-              <SwiperSlide>
-                <div className="flex h-50 w-full items-center justify-center">
-                  <label
-                    htmlFor={`subpost-${subPostState.id}-image-upload`}
-                    className="btn btn-outline btn-secondary btn-sm"
-                  >
-                    {isUploadingImage ? (
-                      <span className="loading loading-spinner"></span>
-                    ) : (
-                      <MdAdd size={16} />
-                    )}
-                  </label>
-                  <input
-                    type="file"
-                    className="hidden"
-                    id={`subpost-${subPostState.id}-image-upload`}
-                    accept="image/*"
-                    onChange={handleEditImage}
-                  />
-                </div>
-              </SwiperSlide>
-            )}
-          </Swiper>
-        )}
+              </div>
+            </SwiperSlide>
+          )}
+        </Swiper>
       </div>
     </details>
   );
