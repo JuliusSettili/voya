@@ -77,6 +77,19 @@ export type Database = {
           display_name?: string;
         };
       };
+      sub_posts: {
+        Row: SubPost;
+        Insert: {
+          title: string;
+          content: string;
+          post_id: number;
+        };
+        Update: {
+          title?: string;
+          content?: string;
+          post_id?: number;
+        };
+      };
     };
   };
 };

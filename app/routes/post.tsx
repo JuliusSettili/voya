@@ -17,7 +17,7 @@ export default function PostPage({
   loaderData: post,
 }: Route.ComponentProps) {
   const [postState, setPostState] = useState(post);
-  const [canDeleteSubPosts, setCanDeleteSubPosts] = useState(false);
+  const [belongsToUser, setBelongsToUser] = useState(false);
 
   useEffect(() => {
     setPostState(post);
@@ -29,7 +29,7 @@ export default function PostPage({
     async function loadOwnership() {
       const belongsToUser = await postBelongsToCurrentUser(postState);
       if (isMounted) {
-        setCanDeleteSubPosts(belongsToUser);
+        setBelongsToUser(belongsToUser);
       }
     }
 
@@ -72,10 +72,14 @@ export default function PostPage({
             key={subPost.id}
             subPost={subPost}
             containerClass="mb-6"
-            onDelete={canDeleteSubPosts ? handleDelete : undefined}
+            onDelete={belongsToUser ? handleDelete : undefined}
+            postBelongsToCurrentUser={belongsToUser}
           />
         ))}
       </div>
+      <button className="btn btn-primary" type="button">
+        Subpost hinzufügen
+      </button>
     </main>
   );
 }

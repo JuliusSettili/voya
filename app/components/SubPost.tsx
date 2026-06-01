@@ -3,15 +3,19 @@ import { Navigation } from "swiper/modules";
 import { MdDeleteOutline } from "react-icons/md";
 import type { MouseEvent } from "react";
 import type { SubPost as SubPostType, SubPostImage } from "../../api/supabaseClient";
+import EditField from "./EditField";
+import { updateSubPost } from "../../api/subposts";
 
 export function SubPost({
   subPost,
   containerClass,
   onDelete,
+  postBelongsToCurrentUser,
 }: {
   subPost: SubPostType;
   containerClass: string;
   onDelete?: (id: number) => void;
+  postBelongsToCurrentUser: boolean;
 }) {
   const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -19,12 +23,30 @@ export function SubPost({
     onDelete?.(subPost.id);
   };
 
+  const handleEditTitle = (newTitle: string) => {
+    updateSubPost(subPost.id, { title: newTitle });
+  };
+
+  const handleEditContent = (newContent: string) => {
+    updateSubPost(subPost.id, { content: newContent });
+  }
+
   return (
     <details className={`collapse collapse-arrow bg-base-100 border border-base-300 ${containerClass}`} name="my-accordion-det-1">
       <summary className="collapse-title flex items-center justify-between gap-2 font-semibold">
-        <span className="min-w-0 flex-1 truncate" title={subPost.title}>
-          {subPost.title}
-        </span>
+        <div className="min-w-0 flex-1 truncate">
+        {postBelongsToCurrentUser && (
+          <EditField
+            value={subPost.title}
+            onChange={handleEditTitle}
+          />
+        )}
+        {!postBelongsToCurrentUser && (
+          <span className="min-w-0 flex-1 truncate" title={subPost.title}>
+            {subPost.title}
+          </span>
+        )}
+        </div>
         {onDelete ? (
           <button
             type="button"
@@ -38,7 +60,16 @@ export function SubPost({
         ) : null}
       </summary>
       <div className="collapse-content text-sm">
-        <div className="mb-5">{subPost.content}</div>
+        {postBelongsToCurrentUser && (
+          <EditField
+            value={subPost.content}
+            onChange={handleEditContent}
+            className="mb-4"
+          />
+        )}
+        {!postBelongsToCurrentUser && (
+          <p className="mb-4">{subPost.content}</p>
+        )}
         {subPost.sub_post_images.length === 1 ? (
           <img src={subPost.sub_post_images[0].image_url} alt={`Sub post image ${subPost.sub_post_images[0].id}`} />
         ) : (
