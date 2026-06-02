@@ -56,3 +56,19 @@ export async function deleteSubPostImage(imageId: number): Promise<void> {
     throw new Error(error.message);
   }
 }
+
+export async function addEmptySubPost(postId: number): Promise<SubPost> {
+  const supabase = getSupabaseClient();
+
+  const { data, error } = await supabase.from("sub_posts").insert({
+    title: "",
+    content: "",
+    post_id: postId,
+  }).select("id, title, content, sub_post_images (id, image_url)").single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as SubPost;
+}

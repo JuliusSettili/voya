@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { Link } from "react-router";
 import { SubPost } from "~/components/SubPost";
-import { deleteSubPost } from "../../api/subposts";
+import { deleteSubPost, addEmptySubPost } from "../../api/subposts";
 import { postBelongsToCurrentUser } from "../../api/posts";
 
 export async function clientLoader({
@@ -39,6 +39,14 @@ export default function PostPage({
       isMounted = false;
     };
   }, [postState]);
+
+  const createEmptySubPost = async () => {
+    const newSubPost = await addEmptySubPost(postState.id);
+    setPostState((p) => ({
+      ...p,
+      sub_posts: p.sub_posts ? [...p.sub_posts, newSubPost] : [newSubPost],
+    }));
+  };
 
   const handleDelete = async (id: number) => {
     try {
@@ -77,7 +85,7 @@ export default function PostPage({
           />
         ))}
       </div>
-      <button className="btn btn-primary" type="button">
+      <button className="btn btn-primary" type="button" onClick={createEmptySubPost}>
         Subpost hinzufügen
       </button>
     </main>
