@@ -3,6 +3,7 @@ import type { Route } from "./+types/explore";
 import PostList from "~/components/PostList";
 import SearchBar from "~/components/SearchBar";
 import FilterComponent from "~/components/FilterComponent";
+import {useSearchParams} from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -33,15 +34,24 @@ export async function clientAction({
 
 export default function Explore({ loaderData: posts }: Route.ComponentProps) {
 
-    const handleCombinedSearch = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const searchQuery = formData.get("searchQuery") as string;
-        const countryIds = formData.getAll("countryIds") as string[];
+    const [searchParams] = useSearchParams();
 
-        console.log("Suchtext:", searchQuery);
-        console.log("Länder-IDs:", countryIds);
-    };
+    const searchQuery = searchParams.get("searchQuery") ?? "";
+    const countryIds = searchParams.getAll("countryIds");
+
+    const filteredPosts = posts.filter((post) => {
+        // Titel-Suche
+        const matchesTitle = post.title.toLowerCase().includes(searchQuery.toLowerCase());
+
+        // Länder-Filter (Prüft, ob der Post ALLE ausgewählten IDs besitzt)
+        const matchesCountries =
+            countryIds.length === 0 ||
+            countryIds.every((selectedId) =>
+                post.countries?.some((country) => String(country.id) === selectedId)
+            );
+
+        return matchesTitle && matchesCountries;
+    });
 
     return (
         <main className="p-8">
@@ -51,20 +61,17 @@ export default function Explore({ loaderData: posts }: Route.ComponentProps) {
             </div>
 
             <form
-                onSubmit={handleCombinedSearch}
+                method="get"
                 className="mb-8 w-full flex flex-col md:flex-row gap-4 items-start md:items-stretch"
             >
-                {/* 40% Breite */}
                 <div className="w-full md:w-5/10 flex flex-col justify-start">
-                    <SearchBar placeholder="Beitrag Titel suchen..." />
+                    <SearchBar placeholder="Beitrag Titel suchen..." defaultValue={searchQuery} />
                 </div>
 
-                {/* 40% Breite */}
                 <div className="w-full md:w-4/10 flex flex-col justify-start">
                     <FilterComponent />
                 </div>
 
-                {/* 20% Breite */}
                 <div className="w-full md:w-1/10">
                     <button
                         type="submit"
@@ -75,7 +82,7 @@ export default function Explore({ loaderData: posts }: Route.ComponentProps) {
                 </div>
             </form>
 
-            <PostList posts={posts} />
+            <PostList posts={filteredPosts} />
         </main>
     );
 }

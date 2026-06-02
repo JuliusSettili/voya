@@ -1,8 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router';
 import CountriesInput from "~/components/CountriesInput";
 
 export default function FilterComponent() {
-    const [selectedCountryIds, setSelectedCountryIds] = useState<number[]>([]);
+    const [searchParams] = useSearchParams();
+
+    const urlCountryIds = searchParams.getAll("countryIds");
+
+    const [selectedCountryIds, setSelectedCountryIds] = useState<number[]>(() =>
+        urlCountryIds.map(id => Number(id))
+    );
+
+    useEffect(() => {
+        setSelectedCountryIds(urlCountryIds.map(id => Number(id)));
+    }, [searchParams]);
 
     return (
         <div className="w-full">
