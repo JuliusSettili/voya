@@ -1,30 +1,84 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import { MdDeleteOutline } from "react-icons/md";
-import type { MouseEvent } from "react";
+import { MdDeleteOutline, MdAdd } from "react-icons/md";
+import { useState, type MouseEvent } from "react";
 import type { SubPost as SubPostType, SubPostImage } from "../../api/supabaseClient";
+import EditField from "./EditField";
+import { addSubPostImage, deleteSubPostImage, getSubPostById, updateSubPost } from "../../api/subposts";
+import { uploadPostImage } from "../../api/posts";
 
 export function SubPost({
   subPost,
   containerClass,
   onDelete,
+  postBelongsToCurrentUser,
 }: {
   subPost: SubPostType;
   containerClass: string;
   onDelete?: (id: number) => void;
+  postBelongsToCurrentUser: boolean;
 }) {
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [subPostState, setSubPostState] = useState(subPost);
+
   const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     onDelete?.(subPost.id);
   };
 
+  const handleEditTitle = (newTitle: string) => {
+    updateSubPost(subPost.id, { title: newTitle });
+  };
+
+  const handleEditContent = (newContent: string) => {
+    updateSubPost(subPost.id, { content: newContent });
+  }
+
+  const handleDeleteSubPostImage = async (imageId: number) => {
+    try {
+      await deleteSubPostImage(imageId);
+    } catch (error) {
+      console.error("Failed to delete sub post image", error);
+    } finally {
+      const updatedSubPost = await getSubPostById(subPost.id);
+      setSubPostState(updatedSubPost);
+    }
+  };
+
+  const handleEditImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+
+    try {
+      const uploadedImageUrl = await uploadPostImage(file);
+      await addSubPostImage(subPost.id, uploadedImageUrl);
+    } catch (error) {
+      console.error("Failed to upload sub post image", error);
+    } finally {
+      setIsUploadingImage(false);
+      const updatedSubPost = await getSubPostById(subPost.id);
+      setSubPostState(updatedSubPost);
+    }
+  };
   return (
     <details className={`collapse collapse-arrow bg-base-100 border border-base-300 ${containerClass}`} name="my-accordion-det-1">
       <summary className="collapse-title flex items-center justify-between gap-2 font-semibold">
-        <span className="min-w-0 flex-1 truncate" title={subPost.title}>
-          {subPost.title}
-        </span>
+        <div className="min-w-0 flex-1 truncate">
+          {postBelongsToCurrentUser && (
+            <EditField
+              value={subPostState.title}
+              onChange={handleEditTitle}
+            />
+          )}
+          {!postBelongsToCurrentUser && (
+            <span className="min-w-0 flex-1 truncate" title={subPostState.title}>
+              {subPostState.title}
+            </span>
+          )}
+        </div>
         {onDelete ? (
           <button
             type="button"
@@ -38,32 +92,55 @@ export function SubPost({
         ) : null}
       </summary>
       <div className="collapse-content text-sm">
-        <div className="mb-5">{subPost.content}</div>
-        {subPost.sub_post_images.length === 1 ? (
-          <img src={subPost.sub_post_images[0].image_url} alt={`Sub post image ${subPost.sub_post_images[0].id}`} />
-        ) : (
-          <Swiper
-            spaceBetween={10}
-            slidesPerView={1}
-            navigation={true}
-            modules={[Navigation]}
-            breakpoints={{
-            640: {
-              slidesPerView: 2,
-            },
-            768: {
-              slidesPerView: 3,
-            },
-          }}
-          >
-            {subPost.sub_post_images.map((image: SubPostImage) => (
-              <SwiperSlide key={image.id}>
-                <img src={image.image_url} alt={`Sub post image ${image.id}`} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+        {postBelongsToCurrentUser && (
+          <EditField
+            value={subPostState.content}
+            onChange={handleEditContent}
+            className="mb-4"
+          />
         )}
-        </div>
+        {!postBelongsToCurrentUser && (
+          <p className="mb-4">{subPostState.content}</p>
+        )}
+        <Swiper
+          spaceBetween={10}
+          slidesPerView={"auto"}
+          navigation={true}
+          modules={[Navigation]}
+        >
+          {subPostState.sub_post_images.map((image: SubPostImage) => (
+            <SwiperSlide key={image.id} style={{ width: "auto" }}>
+              <img className="h-50 relative" src={image.image_url} alt={`Sub post image ${image.id}`} />
+              <button className="btn btn-sm btn-error btn-square absolute top-2 right-2" onClick={() => handleDeleteSubPostImage(image.id)}>
+                <MdDeleteOutline size={16} />
+              </button>
+            </SwiperSlide>
+          ))}
+          {postBelongsToCurrentUser && (
+            <SwiperSlide>
+              <div className="flex h-50 w-50 items-center justify-center">
+                <label
+                  htmlFor={`subpost-${subPostState.id}-image-upload`}
+                  className="btn btn-outline btn-secondary btn-sm"
+                >
+                  {isUploadingImage ? (
+                    <span className="loading loading-spinner"></span>
+                  ) : (
+                    <MdAdd size={16} />
+                  )}
+                </label>
+                <input
+                  type="file"
+                  className="hidden"
+                  id={`subpost-${subPostState.id}-image-upload`}
+                  accept="image/*"
+                  onChange={handleEditImage}
+                />
+              </div>
+            </SwiperSlide>
+          )}
+        </Swiper>
+      </div>
     </details>
   );
 }

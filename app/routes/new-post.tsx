@@ -84,7 +84,7 @@ export default function NewPost() {
 
   return (
     <main className="mx-8 lg:mx-20 my-8">
-      <fetcher.Form method="post" encType="multipart/form-data" className="grid grid-cols-4 grid-rows-auto gap-6 [grid-template-areas:'image_image_image_image''details_details_details_details''countries_countries_countries_countries''description_description_description_description''actions_actions_actions_actions'] md:[grid-template-areas:'image_details_details_countries''description_description_description_description''actions_actions_actions_actions']">
+      <fetcher.Form method="post" className="grid grid-cols-4 grid-rows-auto gap-6 [grid-template-areas:'image_image_image_image''details_details_details_details''countries_countries_countries_countries''description_description_description_description''actions_actions_actions_actions'] md:[grid-template-areas:'image_details_details_countries''description_description_description_description''actions_actions_actions_actions']">
         <div className="[grid-area:image]">
           <label
             htmlFor="title-image-upload"

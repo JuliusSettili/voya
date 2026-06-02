@@ -77,6 +77,30 @@ export type Database = {
           display_name?: string;
         };
       };
+      sub_posts: {
+        Row: SubPost;
+        Insert: {
+          title: string;
+          content: string;
+          post_id: number;
+        };
+        Update: {
+          title?: string;
+          content?: string;
+          post_id?: number;
+        };
+      };
+      sub_post_images: {
+        Row: SubPostImage;
+        Insert: {
+          image_url: string;
+          subpost_id: number;
+        };
+        Update: {
+          image_url?: string;
+          subpost_id?: number;
+        };
+      };
     };
   };
 };
