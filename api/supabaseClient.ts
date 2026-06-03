@@ -10,6 +10,7 @@ export type Country = {
 export type Profile = {
   id: string;
   display_name: string;
+  role_id?: number | null;
 };
 
 export type SubPostImage = {
@@ -77,10 +78,12 @@ export type Database = {
         Insert: {
           id: string;
           display_name: string;
+          role_id?: number | null;
         };
         Update: {
           id?: string;
           display_name?: string;
+          role_id?: number | null;
         };
       };
       sub_posts: {

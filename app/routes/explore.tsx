@@ -4,6 +4,7 @@ import PostList from "~/components/PostList";
 import SearchBar from "~/components/SearchBar";
 import FilterComponent from "~/components/FilterComponent";
 import {useSearchParams} from "react-router";
+import { checkIsAdmin } from "../../api/auth";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,7 +14,10 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  return await fetchPosts();
+    const posts = await fetchPosts();
+    const isAdmin = await checkIsAdmin();
+
+    return { posts, isAdmin };
 }
 
 export async function clientAction({
@@ -65,7 +69,8 @@ export async function clientAction({
   return null;
 }
 
-export default function Explore({ loaderData: posts }: Route.ComponentProps) {
+export default function Explore({ loaderData }: Route.ComponentProps) {
+    const {posts, isAdmin} = loaderData;
 
     const [searchParams] = useSearchParams();
 
@@ -120,7 +125,7 @@ export default function Explore({ loaderData: posts }: Route.ComponentProps) {
                 </div>
             </form>
 
-            <PostList posts={filteredPosts} isAdmin={true}/>
+            <PostList posts={filteredPosts} isAdmin={isAdmin}/>
         </main>
     );
 }

@@ -1,5 +1,5 @@
 import ReactCountryFlag from "react-country-flag";
-import { Link, useFetcher } from "react-router";
+import { Link, useFetcher, useLocation } from "react-router";
 import type { Country, Profile } from "../../api/supabaseClient";
 import {MdBlock, MdDeleteOutline, MdLockOpen} from "react-icons/md";
 import BlockPostModal from "./BlockPostModal";
@@ -20,6 +20,9 @@ export default function PostCard(props: {
     // props for titel and description and image url and tags
     const { title, description, imageUrl, countries, link, profile, postId, isAdmin, isBlocked } = props;
     const fetcher = useFetcher();
+
+    const location = useLocation();
+    const isProfilePage = location.pathname.includes("/profile");
 
     const openBlockModal = () => {
         const modal = document.getElementById(`block-modal-${postId}`) as HTMLDialogElement;
@@ -83,21 +86,24 @@ export default function PostCard(props: {
                                 </>
                             )
                         )}
-                        {/* Löschen Button (eigentlich nur für Postersteller sichtbar) */}
-                        <fetcher.Form method="post" className="ml-2">
-                            <input type="hidden" name="intent" value="delete-post" />
-                            <input type="hidden" name="postId" value={String(postId)} />
-                            <button
-                                type="submit"
-                                aria-label="Löschen"
-                                className="btn btn-square btn-error btn-sm"
-                                title="Löschen"
-                                disabled={fetcher.state !== "idle"}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <MdDeleteOutline size={16} />
-                            </button>
-                        </fetcher.Form>
+
+                        {/* Löschen Button (nur bei Beiträgen auf eigener Profilseite sichtbar) */}
+                        {isProfilePage && (
+                            <fetcher.Form method="post" className="ml-2">
+                                <input type="hidden" name="intent" value="delete-post" />
+                                <input type="hidden" name="postId" value={String(postId)} />
+                                <button
+                                    type="submit"
+                                    aria-label="Löschen"
+                                    className="btn btn-square btn-error btn-sm"
+                                    title="Löschen"
+                                    disabled={fetcher.state !== "idle"}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <MdDeleteOutline size={16} />
+                                </button>
+                            </fetcher.Form>
+                        )}
                     </div>
                 </div>
                 <p>{description}</p>
