@@ -40,8 +40,13 @@ export default function Explore({ loaderData: posts }: Route.ComponentProps) {
     const countryIds = searchParams.getAll("countryIds");
 
     const filteredPosts = posts.filter((post) => {
-        // Titel-Suche
-        const matchesTitle = post.title.toLowerCase().includes(searchQuery.toLowerCase());
+        // Such-String in einzelne Wörter (Kleinbuchstaben) aufteilen
+        const searchTerms = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
+
+        // Titel-Suche: Prüft, ob JEDES eingegebene Wort im Titel vorkommt
+        const matchesTitle = searchTerms.length === 0 || searchTerms.every(term =>
+            post.title.toLowerCase().includes(term)
+        );
 
         // Länder-Filter (Prüft, ob der Post ALLE ausgewählten IDs besitzt)
         const matchesCountries =
