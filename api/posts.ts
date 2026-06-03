@@ -31,7 +31,7 @@ export async function fetchPosts(): Promise<Post[]> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("posts")
-    .select("id, title, description, title_image_url, countries (id, name, code), profiles (id, display_name)")
+    .select("id, title, description, title_image_url, is_blocked, countries (id, name, code), profiles (id, display_name)")
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -45,7 +45,7 @@ export async function fetchPostsByProfileId(profileId: string): Promise<Post[]> 
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("posts")
-    .select("id, title, description, title_image_url, countries (id, name, code), profiles (id, display_name)")
+    .select("id, title, description, title_image_url, is_blocked, countries (id, name, code), profiles (id, display_name)")
     .eq("user_id", profileId)
     .order("created_at", { ascending: true });
 
@@ -60,7 +60,7 @@ export async function fetchPost(id: string): Promise<Post> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("posts")
-    .select("id, title, description, title_image_url, countries (id, name, code), profiles (id, display_name), sub_posts (id, title, content, sub_post_images (id, image_url))")
+    .select("id, title, description, title_image_url, is_blocked, countries (id, name, code), profiles (id, display_name), sub_posts (id, title, content, sub_post_images (id, image_url))")
     .eq("id", id)
     .single();
 
@@ -142,4 +142,36 @@ export async function createPost(postData: {
   }
 
   return createdPost;
+}
+
+export async function blockPost(id: string, reason: string): Promise<void> {
+  const supabase = getSupabaseClient();
+
+  const { error } = await supabase
+      .from("posts")
+      .update({
+        is_blocked: true,
+        reason_is_blocked: reason,
+      } as never)
+      .eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function unblockPost(id: string): Promise<void> {
+  const supabase = getSupabaseClient();
+
+  const { error } = await supabase
+      .from("posts")
+      .update({
+        is_blocked: false,
+        reason_is_blocked: null,
+      } as never)
+      .eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
 }

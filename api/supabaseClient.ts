@@ -10,6 +10,7 @@ export type Country = {
 export type Profile = {
   id: string;
   display_name: string;
+  role_id?: number | null;
 };
 
 export type SubPostImage = {
@@ -32,6 +33,8 @@ export type Post = {
   countries: Country[];
   profiles: Profile;
   sub_posts?: SubPost[];
+  is_blocked?: boolean;
+  reason_isBlocked?: string | null;
 };
 
 export type Database = {
@@ -56,6 +59,8 @@ export type Database = {
           title_image_url?: string;
           profile_id?: string;
           is_private?: boolean;
+          is_blocked?: boolean;
+          reason_isBlocked?: string | null;
         };
         Update: {
           id?: number;
@@ -64,6 +69,8 @@ export type Database = {
           title_image_url?: string;
           profile_id?: string;
           is_private?: boolean;
+          is_blocked?: boolean;
+          reason_isBlocked?: string | null;
         };
       };
       profiles: {
@@ -71,10 +78,12 @@ export type Database = {
         Insert: {
           id: string;
           display_name: string;
+          role_id?: number | null;
         };
         Update: {
           id?: string;
           display_name?: string;
+          role_id?: number | null;
         };
       };
       sub_posts: {
