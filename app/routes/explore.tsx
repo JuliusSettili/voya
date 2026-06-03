@@ -78,6 +78,10 @@ export default function Explore({ loaderData }: Route.ComponentProps) {
     const countryIds = searchParams.getAll("countryIds");
 
     const filteredPosts = posts.filter((post) => {
+        if (post.is_blocked && !isAdmin) {
+            return false;
+        }
+
         // Such-String in einzelne Wörter (Kleinbuchstaben) aufteilen
         const searchTerms = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
 
