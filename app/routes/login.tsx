@@ -20,7 +20,7 @@ export default function LoginPage() {
         setIsSubmitting(false);
 
         if (!result.success) {
-            setError('Falsche E-Mail oder Passwort');
+            setError(result.error || 'Login fehlgeschlagen');
             return;
         }
 
