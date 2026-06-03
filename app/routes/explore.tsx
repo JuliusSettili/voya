@@ -1,4 +1,4 @@
-import { fetchPosts, deletePost } from "../../api/posts";
+import { fetchPosts, deletePost, blockPost, unblockPost } from "../../api/posts";
 import type { Route } from "./+types/explore";
 import PostList from "~/components/PostList";
 import SearchBar from "~/components/SearchBar";
@@ -20,16 +20,49 @@ export async function clientAction({
   request,
 }: Route.ClientActionArgs) {
   let formData = await request.formData();
-    let intent = String(formData.get("intent") ?? "");
+  let intent = String(formData.get("intent") ?? "");
 
-    if (intent === "delete-post") {
-        const postId = String(formData.get("postId") ?? "");
-        if (postId) {
-            await deletePost(postId);
-        }
-    }
+    console.log("Action gestartet! Intent lautet:", intent);
 
-    return null;
+  if (intent === "delete-post") {
+      const postId = String(formData.get("postId") ?? "");
+      if (postId) {
+          await deletePost(postId);
+      }
+  }
+
+  if (intent === "block-post") {
+      const postId = String(formData.get("postId") ?? "");
+      const reason = String(formData.get("reason") ?? "");
+
+      console.log("Sperren-Daten empfangen -> PostID:", postId, "| Reason:", reason);
+
+      if (postId && reason.length >= 5) {
+          try {
+              console.log("Sende Anfrage an Supabase..."); // DEBUG 3
+              await blockPost(postId, reason);
+              console.log("Erfolgreich in Supabase gespeichert!"); // DEBUG 4
+          } catch (error) {
+              console.error("FEHLER VON SUPABASE:", error); // DEBUG 5
+          }
+      } else {
+          console.warn("Abbruch: PostID fehlt oder Begründung ist kürzer als 5 Zeichen!");
+      }
+  }
+
+  if (intent === "unblock-post") {
+      const postId = String(formData.get("postId") ?? "");
+      if (postId) {
+          try {
+              await unblockPost(postId);
+              console.log("Erfolgreich freigegeben!");
+          } catch (error) {
+              console.error("FEHLER VON SUPABASE:", error);
+          }
+      }
+  }
+
+  return null;
 }
 
 export default function Explore({ loaderData: posts }: Route.ComponentProps) {
@@ -87,7 +120,7 @@ export default function Explore({ loaderData: posts }: Route.ComponentProps) {
                 </div>
             </form>
 
-            <PostList posts={filteredPosts} />
+            <PostList posts={filteredPosts} isAdmin={true}/>
         </main>
     );
 }
