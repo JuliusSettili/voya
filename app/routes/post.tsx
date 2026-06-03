@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { Link } from "react-router";
 import { SubPost } from "~/components/SubPost";
-import { deleteSubPost } from "../../api/subposts";
+import { deleteSubPost, addEmptySubPost } from "../../api/subposts";
 import { postBelongsToCurrentUser } from "../../api/posts";
 
 export async function clientLoader({
@@ -17,7 +17,7 @@ export default function PostPage({
   loaderData: post,
 }: Route.ComponentProps) {
   const [postState, setPostState] = useState(post);
-  const [canDeleteSubPosts, setCanDeleteSubPosts] = useState(false);
+  const [belongsToUser, setBelongsToUser] = useState(false);
 
   useEffect(() => {
     setPostState(post);
@@ -29,7 +29,7 @@ export default function PostPage({
     async function loadOwnership() {
       const belongsToUser = await postBelongsToCurrentUser(postState);
       if (isMounted) {
-        setCanDeleteSubPosts(belongsToUser);
+        setBelongsToUser(belongsToUser);
       }
     }
 
@@ -39,6 +39,14 @@ export default function PostPage({
       isMounted = false;
     };
   }, [postState]);
+
+  const createEmptySubPost = async () => {
+    const newSubPost = await addEmptySubPost(postState.id);
+    setPostState((p) => ({
+      ...p,
+      sub_posts: p.sub_posts ? [...p.sub_posts, newSubPost] : [newSubPost],
+    }));
+  };
 
   const handleDelete = async (id: number) => {
     try {
@@ -72,10 +80,14 @@ export default function PostPage({
             key={subPost.id}
             subPost={subPost}
             containerClass="mb-6"
-            onDelete={canDeleteSubPosts ? handleDelete : undefined}
+            onDelete={belongsToUser ? handleDelete : undefined}
+            postBelongsToCurrentUser={belongsToUser}
           />
         ))}
       </div>
+      <button className="btn btn-primary" type="button" onClick={createEmptySubPost}>
+        Subpost hinzufügen
+      </button>
     </main>
   );
 }

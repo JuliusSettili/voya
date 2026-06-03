@@ -47,6 +47,8 @@ export type Post = {
   countries: Country[];
   profiles: Profile;
   sub_posts?: SubPost[];
+  is_blocked?: boolean;
+  reason_isBlocked?: string | null;
 };
 
 export type Database = {
@@ -71,6 +73,8 @@ export type Database = {
           title_image_url?: string;
           profile_id?: string;
           is_private?: boolean;
+          is_blocked?: boolean;
+          reason_isBlocked?: string | null;
         };
         Update: {
           id?: number;
@@ -79,6 +83,8 @@ export type Database = {
           title_image_url?: string;
           profile_id?: string;
           is_private?: boolean;
+          is_blocked?: boolean;
+          reason_isBlocked?: string | null;
         };
       };
       profiles: {
@@ -86,10 +92,36 @@ export type Database = {
         Insert: {
           id: string;
           display_name: string;
+          role_id?: number | null;
         };
         Update: {
           id?: string;
           display_name?: string;
+          role_id?: number | null;
+        };
+      };
+      sub_posts: {
+        Row: SubPost;
+        Insert: {
+          title: string;
+          content: string;
+          post_id: number;
+        };
+        Update: {
+          title?: string;
+          content?: string;
+          post_id?: number;
+        };
+      };
+      sub_post_images: {
+        Row: SubPostImage;
+        Insert: {
+          image_url: string;
+          subpost_id: number;
+        };
+        Update: {
+          image_url?: string;
+          subpost_id?: number;
         };
       };
     };
