@@ -14,3 +14,25 @@ export async function fetchCountries(): Promise<Country[]> {
 
   return data ?? [];
 }
+
+export async function fetchCountriesForProfile(profileId: string): Promise<Country[]> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .select("post_country_relation(countries(id, name, code))")
+    .eq("user_id", profileId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  console.log("Fetched countries for profile:", data);
+
+  const countries =
+    data?.flatMap((post) =>
+      post.post_country_relation.map(
+        (relation) => relation.countries
+      )) ?? [];
+
+  return countries;
+}
