@@ -1,4 +1,4 @@
-import { fetchProfiles, assignRoleToProfile, blockProfile, unblockProfile } from "../../api/profiles";
+import { fetchProfiles, assignRoleToProfile, blockProfile, unblockProfile } from "../../api/profile";
 import type { Route } from "./+types/nutzerverwaltung";
 import { fetchRoles } from "../../api/roles";
 import { useState } from "react";
