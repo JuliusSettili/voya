@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import { fetchProfileById, updateProfileDisplayName } from "../../api/profile";
 import { deletePost, fetchPostsByProfileId } from "../../api/posts";
-=======
-import { fetchFullProfile, updateProfileDisplayName } from "../../api/profile";
-import {deletePost, fetchPostsByProfileId, updatePostPrivacy} from "../../api/posts";
->>>>>>> 2db8eeb405fd357ddbe465c1d327333230222b37
 import { fetchCountriesForProfile } from "../../api/countries";
 import type { Route } from "./+types/profile";
 import PostList from "~/components/PostList";
