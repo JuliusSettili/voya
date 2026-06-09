@@ -1,9 +1,11 @@
 import ReactCountryFlag from "react-country-flag";
-import { Link, useFetcher, useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import type { Country, Profile } from "../../api/supabaseClient";
-import {MdBlock, MdDeleteOutline, MdLockOpen} from "react-icons/md";
+import { MdBlock, MdDeleteOutline, MdLockOpen, MdLockOutline, MdPublic } from "react-icons/md";
 import BlockPostModal from "./BlockPostModal";
 import UnblockPostModal from "./UnblockPostModal";
+import TogglePrivacyModal from "./TogglePrivacyModal";
+import DeletePostModal from "~/components/DeletePostModal";
 
 export default function PostCard(props: {
     title: string;
@@ -15,11 +17,10 @@ export default function PostCard(props: {
     postId: number;
     isAdmin?: boolean;
     isBlocked?: boolean;
+    isPrivate?: boolean;
 }) {
 
-    // props for titel and description and image url and tags
-    const { title, description, imageUrl, countries, link, profile, postId, isAdmin, isBlocked } = props;
-    const fetcher = useFetcher();
+    const { title, description, imageUrl, countries, link, profile, postId, isAdmin, isBlocked, isPrivate } = props;
 
     const location = useLocation();
     const isProfilePage = location.pathname.includes("/profile");
@@ -34,6 +35,16 @@ export default function PostCard(props: {
         if (modal) modal.showModal();
     };
 
+    const openTogglePrivacyModal = () => {
+        const modal = document.getElementById(`toggle-privacy-modal-${postId}`) as HTMLDialogElement;
+        if (modal) modal.showModal();
+    };
+
+    const openDeleteModal = () => {
+        const modal = document.getElementById(`delete-modal-${postId}`) as HTMLDialogElement;
+        if (modal) modal.showModal();
+    };
+
     return (
         <div className={`card lg:card-side card-sm bg-base-100 shadow-sm ${isBlocked ? 'opacity-70 grayscale' : ''}`}>
             <figure className="block lg:w-100 h-full">
@@ -45,9 +56,34 @@ export default function PostCard(props: {
             </figure>
             <div className="card-body">
                 <div className="flex justify-between mb-2">
-                    <Link to={link} className="card-title hover:underline">
-                        {title} {isBlocked && <span className="text-error text-sm font-normal">(Gesperrt)</span>}
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        {/* Icon Logik: Nur auf Profilseite anzeigen */}
+                        {isProfilePage && (
+                            <>
+                                <div
+                                    className="tooltip tooltip-bottom flex items-center text-gray-500"
+                                    data-tip={isPrivate ? "Ist privat (Klicken zum Ändern)" : "Ist öffentlich (Klicken zum Ändern)"}
+                                >
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            openTogglePrivacyModal();
+                                        }}
+                                        className="hover:text-primary transition-colors cursor-pointer"
+                                    >
+                                        {isPrivate ? <MdLockOutline size={20} /> : <MdPublic size={20} />}
+                                    </button>
+                                </div>
+                                <TogglePrivacyModal postId={postId} currentIsPrivate={!!isPrivate} />
+                            </>
+                        )}
+
+                        <Link to={link} className="card-title hover:underline m-0">
+                            {title} {isBlocked && <span className="text-error text-sm font-normal">(Gesperrt)</span>}
+                        </Link>
+                    </div>
                     <div className="flex gap-2 ml-2">
 
                         {/* Sperren Button & Modal (nur für Admins sichtbar) */}
@@ -91,20 +127,22 @@ export default function PostCard(props: {
 
                         {/* Löschen Button (nur bei Beiträgen auf eigener Profilseite sichtbar) */}
                         {isProfilePage && (
-                            <fetcher.Form method="post" className="ml-2">
-                                <input type="hidden" name="intent" value="delete-post" />
-                                <input type="hidden" name="postId" value={String(postId)} />
+                            <div className="ml-2">
                                 <button
-                                    type="submit"
+                                    type="button"
                                     aria-label="Löschen"
                                     className="btn btn-square btn-error btn-sm"
                                     title="Löschen"
-                                    disabled={fetcher.state !== "idle"}
-                                    onClick={(e) => e.stopPropagation()}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        openDeleteModal();
+                                    }}
                                 >
                                     <MdDeleteOutline size={16} />
                                 </button>
-                            </fetcher.Form>
+                                <DeletePostModal postId={postId} />
+                            </div>
                         )}
                     </div>
                 </div>

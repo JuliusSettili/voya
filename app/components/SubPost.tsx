@@ -6,6 +6,7 @@ import type { SubPost as SubPostType, SubPostImage } from "../../api/supabaseCli
 import EditField from "./EditField";
 import { addSubPostImage, deleteSubPostImage, getSubPostById, updateSubPost } from "../../api/subposts";
 import { uploadPostImage } from "../../api/posts";
+import DeleteImageModal from "./DeleteImageModal";
 
 export function SubPost({
   subPost,
@@ -44,6 +45,11 @@ export function SubPost({
       const updatedSubPost = await getSubPostById(subPost.id);
       setSubPostState(updatedSubPost);
     }
+  };
+
+  const openDeleteImageModal = (imageId: number) => {
+    const modal = document.getElementById(`delete-image-modal-${imageId}`) as HTMLDialogElement;
+    if (modal) modal.showModal();
   };
 
   const handleEditImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,12 +115,27 @@ export function SubPost({
           modules={[Navigation]}
         >
           {subPostState.sub_post_images.map((image: SubPostImage) => (
-            <SwiperSlide key={image.id} style={{ width: "auto" }}>
-              <img className="h-50 relative" src={image.image_url} alt={`Sub post image ${image.id}`} />
-              <button className="btn btn-sm btn-error btn-square absolute top-2 right-2" onClick={() => handleDeleteSubPostImage(image.id)}>
-                <MdDeleteOutline size={16} />
-              </button>
-            </SwiperSlide>
+              <SwiperSlide key={image.id} style={{ width: "auto" }}>
+                <img className="h-50 relative" src={image.image_url} alt={`Sub post image ${image.id}`} />
+                {postBelongsToCurrentUser && (
+                    <>
+                      <button
+                          className="btn btn-sm btn-error btn-square absolute top-2 right-2"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openDeleteImageModal(image.id);
+                          }}
+                      >
+                        <MdDeleteOutline size={16} />
+                      </button>
+                      <DeleteImageModal
+                          imageId={image.id}
+                          onConfirm={() => handleDeleteSubPostImage(image.id)}
+                      />
+                    </>
+                )}
+              </SwiperSlide>
           ))}
           {postBelongsToCurrentUser && (
             <SwiperSlide>

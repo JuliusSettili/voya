@@ -20,6 +20,7 @@ export default function PostList({ posts, isAdmin }: { posts: Post[], isAdmin?: 
           postId={post.id}
           isAdmin={isAdmin}
           isBlocked={(post as any).is_blocked}
+          isPrivate={(post as any).is_private}
         />
       ))}
     </div>

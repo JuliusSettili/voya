@@ -78,6 +78,10 @@ export default function Explore({ loaderData }: Route.ComponentProps) {
     const countryIds = searchParams.getAll("countryIds");
 
     const filteredPosts = posts.filter((post) => {
+        if (post.is_private) {
+            return false;
+        }
+
         if (post.is_blocked && !isAdmin) {
             return false;
         }

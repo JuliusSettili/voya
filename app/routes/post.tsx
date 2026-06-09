@@ -6,6 +6,8 @@ import { Link } from "react-router";
 import { SubPost } from "~/components/SubPost";
 import { deleteSubPost, addEmptySubPost } from "../../api/subposts";
 import { postBelongsToCurrentUser } from "../../api/posts";
+import EditField from "~/components/EditField";
+import { updatePostData } from "../../api/posts";
 
 export async function clientLoader({
   params,
@@ -61,11 +63,27 @@ export default function PostPage({
     }
   };
 
+  const handleEditTitle = async (newTitle: string) => {
+    await updatePostData(postState.id, { title: newTitle });
+    setPostState((p) => ({ ...p, title: newTitle }));
+  };
+
+  const handleEditDescription = async (newDescription: string) => {
+    await updatePostData(postState.id, { description: newDescription });
+    setPostState((p) => ({ ...p, description: newDescription }));
+  };
+
   return (
     <main className="p-6 grid grid-cols-4 gap-6 [grid-template-areas:'image_title_title_flags''description_description_description_description''content_content_content_content'] lg:[grid-template-areas:'title_flags_flags_image''description_description_description_image''content_content_content_image']">
       <img className="[grid-area:image]" src={postState.title_image_url} alt={postState.title} />
       <div className="[grid-area:title]">
-        <h1 className="mb-1 text-2xl font-semibold ">{postState.title}</h1>
+        {belongsToUser ? (
+            <div className="mb-1 text-2xl font-semibold">
+              <EditField value={postState.title} onChange={handleEditTitle} />
+            </div>
+        ) : (
+            <h1 className="mb-1 text-2xl font-semibold">{postState.title}</h1>
+        )}
         <Link to={`/user/${postState.profiles.id}`} className="text-sm text-gray-600">@{postState.profiles.display_name}</Link>
       </div>
       <div className="mr-3 [grid-area:flags] justify-self-end">
@@ -73,7 +91,13 @@ export default function PostPage({
           <ReactCountryFlag key={country.id} countryCode={country.code} svg />
         ))}
       </div>
-      <p className="[grid-area:description]">{postState.description}</p>
+      <div className="[grid-area:description]">
+        {belongsToUser ? (
+            <EditField value={postState.description} onChange={handleEditDescription} />
+        ) : (
+            <p>{postState.description}</p>
+        )}
+      </div>
       <div className="[grid-area:content]">
         {postState.sub_posts?.map((subPost) => (
           <SubPost
@@ -85,9 +109,11 @@ export default function PostPage({
           />
         ))}
       </div>
-      <button className="btn btn-primary" type="button" onClick={createEmptySubPost}>
-        Subpost hinzufügen
-      </button>
+      {belongsToUser && (
+          <button className="btn btn-primary" type="button" onClick={createEmptySubPost}>
+            Subpost hinzufügen
+          </button>
+      )}
     </main>
   );
 }
