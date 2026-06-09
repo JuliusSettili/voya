@@ -1,4 +1,4 @@
-import { fetchProfiles, assignRoleToProfile, blockProfile, unblockProfile } from "../../api/profile";
+import { fetchProfiles, updateProfileRole, blockProfile, unblockProfile } from "../../api/profile";
 import type { Route } from "./+types/nutzerverwaltung";
 import { fetchRoles } from "../../api/roles";
 import { useState } from "react";
@@ -33,7 +33,7 @@ export default function AdminPage({
   };
 
   const handleRoleChange = async (profileId: string, roleId: number) => {
-    await assignRoleToProfile(profileId, roleId);
+    await updateProfileRole(profileId, roleId);
     // Refetch profiles to update the table
     const updatedProfiles = await fetchProfiles();
     setProfiles(updatedProfiles);

@@ -1,5 +1,7 @@
 import { getSupabaseClient } from "./supabaseClient";
 
+const ADMIN_ROLE_ID = 0;
+
 export async function getUser() {
   const supabase = getSupabaseClient();
   const {
@@ -21,5 +23,5 @@ export async function checkIsAdmin(): Promise<boolean> {
       .single();
 
   const profile = data as any;
-  return profile?.role_id === 0;
+  return profile?.role_id === ADMIN_ROLE_ID;
 }

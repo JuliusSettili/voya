@@ -103,6 +103,7 @@ export type Database = {
       sub_posts: {
         Row: SubPost;
         Insert: {
+          id: number;
           title: string;
           content: string;
           post_id: number;

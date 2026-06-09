@@ -1,4 +1,4 @@
-import { fetchFullProfile, fetchProfile } from './profile'
+import { fetchProfileById } from './profile'
 import { getSupabaseClient } from './supabaseClient'
 
 export type AuthResult = {
@@ -25,7 +25,7 @@ export async function login(formData: FormData): Promise<AuthResult> {
     })
 
     const userId = (await supabase.auth.getUser()).data.user?.id!;
-    const userProfile = await fetchFullProfile(userId);
+    const userProfile = await fetchProfileById(userId);
     const profileBlocked = userProfile.blocked;
 
     if (profileBlocked) {

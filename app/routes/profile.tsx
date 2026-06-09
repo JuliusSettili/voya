@@ -1,4 +1,4 @@
-import { fetchFullProfile, updateProfileDisplayName } from "../../api/profile";
+import { fetchProfileById, updateProfileDisplayName } from "../../api/profile";
 import { deletePost, fetchPostsByProfileId } from "../../api/posts";
 import { fetchCountriesForProfile } from "../../api/countries";
 import type { Route } from "./+types/profile";
@@ -10,7 +10,7 @@ import { MdAdd } from "react-icons/md";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const [profile, posts, countries] = await Promise.all([
-    fetchFullProfile(params.id),
+    fetchProfileById(params.id),
     fetchPostsByProfileId(params.id),
     fetchCountriesForProfile(params.id),
   ]);

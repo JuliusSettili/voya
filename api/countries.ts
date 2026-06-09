@@ -15,6 +15,7 @@ export async function fetchCountries(): Promise<Country[]> {
   return data ?? [];
 }
 
+{/* Fetches all countries from post_countries for a given profile_Id and returns them as a list */}
 export async function fetchCountriesForProfile(profileId: string): Promise<Country[]> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
@@ -26,13 +27,10 @@ export async function fetchCountriesForProfile(profileId: string): Promise<Count
     throw new Error(error.message);
   }
 
-  console.log("Fetched countries for profile:", data);
-
   const countries =
-    data?.flatMap((post) =>
-      post.post_country_relation.map(
-        (relation) => relation.countries
-      )) ?? [];
+    data?.flatMap((post) => 
+      post.post_country_relation.map((relation) => 
+        relation.countries)) ?? [];
 
   return countries;
 }

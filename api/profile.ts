@@ -62,7 +62,7 @@ export async function updateProfileDisplayName(profileId: string, displayName: s
   }
 }
 
-export async function assignRoleToProfile(profileId: string, roleId: number): Promise<void> {
+export async function updateProfileRole(profileId: string, roleId: number): Promise<void> {
   const supabase = getSupabaseClient();
   const { error } = await supabase
     .from("profiles")
@@ -74,23 +74,7 @@ export async function assignRoleToProfile(profileId: string, roleId: number): Pr
   }
 }
 
-
-export async function fetchProfile(id: string): Promise<Profile> {
-  const supabase = getSupabaseClient();
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id, display_name")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
-}
-
-export async function fetchFullProfile(id: string): Promise<Profile> {
+export async function fetchProfileById(id: string): Promise<Profile> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("profiles")
