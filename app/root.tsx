@@ -6,12 +6,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
+import { CgSpinner } from "react-icons/cg";
 import type { Route } from "./+types/root";
 import "./app.css";
 
 export function HydrateFallback() {
-  return <div>Loading...</div>;
+  return <div className="flex justify-center items-center h-screen"><CgSpinner className="animate-spin" size={48} /></div>;
 }
 
 export const links: Route.LinksFunction = () => [
