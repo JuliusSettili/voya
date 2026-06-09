@@ -36,7 +36,7 @@ export default function PostCard(props: {
 
     return (
         <div className={`card lg:card-side card-sm bg-base-100 shadow-sm ${isBlocked ? 'opacity-70 grayscale' : ''}`}>
-            <figure className="block w-100 h-full">
+            <figure className="block lg:w-100 h-full">
                 <img
                     src={imageUrl}
                     alt={title}
