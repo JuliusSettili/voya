@@ -48,7 +48,9 @@ export default function ProfilePage({ loaderData }: Route.ComponentProps) {
     <main className="p-8">
       <div className="mb-8 flex justify-between">
         <div>
-          <h1 className="text-4xl font-bold mb-2">{profile.display_name}</h1>
+          <h1 className="text-4xl font-bold mb-2">
+            <AsyncEditField value={profile.display_name} onChange={async (value) => {await updateProfileDisplayName(profile.id, value)}} />
+          </h1>
           <div className="mb-2 badge badge-secondary">{profile.email}</div>
           <div className="mb-2">{countries.map((country) => (
               <ReactCountryFlag className="me-2" key={country.code} countryCode={country.code} svg />
