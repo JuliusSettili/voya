@@ -60,15 +60,10 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li>
-                    <Link to="/new-post">
-                        Post erstellen
-                    </Link>
-                </li>
-                <li>
                     {user?.id ? (
                         <details>
                         <summary>{user.user_metadata?.display_name ?? 'Account'}</summary>
-                        <ul className="bg-base-100 rounded-t-none p-2">
+                        <ul className="bg-base-100 rounded-t-none p-2 z-50">
                             <li><Link to={`/profile/${user.id}`}>Profil</Link></li>
                             <li>
                                 <button

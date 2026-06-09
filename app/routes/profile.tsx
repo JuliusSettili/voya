@@ -37,30 +37,19 @@ export default function ProfilePage({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="p-8">
-      <div className="grid grid-cols-1 mb-8 border pb-4 px-4">
+      <div className="mb-8 flex justify-between">
         <div>
-          <div className="font-bold text-lg">Profil:</div>
-          <AsyncEditField value={profile.display_name} onChange={async (value) => {await updateProfileDisplayName(profile.id, value)}} />
-        </div>
-        <div>
-          <div className="font-bold text-lg">Email:</div>
-          <div className="flex items-center gap-2">{profile.email}</div>
-        </div>
-        <div>
-          <div className="font-bold text-lg">Länder:</div>
-          <div className="flex flex-wrap">
-            {countries.map((country) => (
-              <ReactCountryFlag key={country.code} countryCode={country.code} svg />
+          <h1 className="text-4xl font-bold mb-2">{profile.display_name}</h1>
+          <div className="mb-2 badge badge-secondary">{profile.email}</div>
+          <div className="mb-2">{countries.map((country) => (
+              <ReactCountryFlag className="me-2" key={country.code} countryCode={country.code} svg />
             ))}
           </div>
         </div>
-        <div className="mt-4">
-          <Link to="/new-post">
-            <button type="button" className="w-40 h-12 border flex bg-blue-500 items-center justify-center">
-              <MdAdd size={48} />
-            </button>
-          </Link>
-        </div>
+        <Link className="btn btn-primary" to="/new-post">
+          <MdAdd size={16} />
+          Post erstellen
+        </Link>
       </div>
       <PostList posts={posts} />
     </main>
