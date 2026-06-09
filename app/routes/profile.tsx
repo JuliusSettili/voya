@@ -1,5 +1,5 @@
 import { fetchFullProfile, updateProfileDisplayName } from "../../api/profile";
-import { deletePost, fetchPostsByProfileId } from "../../api/posts";
+import {deletePost, fetchPostsByProfileId, updatePostPrivacy} from "../../api/posts";
 import { fetchCountriesForProfile } from "../../api/countries";
 import type { Route } from "./+types/profile";
 import PostList from "~/components/PostList";
@@ -26,6 +26,15 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
     const postId = String(formData.get("postId") ?? "");
     if (postId) {
       await deletePost(postId);
+    }
+  }
+
+  if (intent === "toggle-privacy") {
+    const postId = String(formData.get("postId") ?? "");
+    const isPrivate = formData.get("isPrivate") === "true";
+
+    if (postId) {
+      await updatePostPrivacy(postId, isPrivate);
     }
   }
 

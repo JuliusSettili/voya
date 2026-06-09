@@ -49,6 +49,7 @@ export type Post = {
   sub_posts?: SubPost[];
   is_blocked?: boolean;
   reason_isBlocked?: string | null;
+  is_private: boolean;
 };
 
 export type Database = {
