@@ -36,10 +36,12 @@ export default function PostCard(props: {
 
     return (
         <div className={`card lg:card-side card-sm bg-base-100 shadow-sm ${isBlocked ? 'opacity-70 grayscale' : ''}`}>
-            <figure className="block w-full h-full">
+            <figure className="block w-100 h-full">
                 <img
                     src={imageUrl}
-                    alt={title} />
+                    alt={title}
+                    className="object-cover w-full h-80 lg:w-100"
+                />
             </figure>
             <div className="card-body">
                 <div className="flex justify-between mb-2">
