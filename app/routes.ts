@@ -9,7 +9,6 @@ export default [
   ]),
   layout("./layouts/default.tsx", [
     index("./routes/explore.tsx"),
-    route("countries", "./routes/countries.tsx"),
     route("post/:id", "./routes/post.tsx"),
     route("nutzerverwaltung", "./routes/nutzerverwaltung.tsx"),
     route("profile/:id", "./routes/profile.tsx"),

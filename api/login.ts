@@ -25,11 +25,8 @@ export async function login(formData: FormData): Promise<AuthResult> {
     })
 
     const userId = (await supabase.auth.getUser()).data.user?.id!;
-    console.log('User ID:', userId);
     const userProfile = await fetchFullProfile(userId);
-    console.log("User Profile:", userProfile);
     const profileBlocked = userProfile.blocked;
-    console.log('Profile Blocked:', profileBlocked);
 
     if (profileBlocked) {
         supabase.auth.signOut().catch((error) => {

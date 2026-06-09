@@ -1,10 +1,10 @@
 import { redirect } from "react-router";
 import { getUser } from "../../api/auth";
 
-export async function authGuardMiddleware() {
+export async function authGuardMiddleware({ pattern }: { pattern: string }) {
   const user = await getUser();
 
-  if (!user) {
+  if (!user && pattern !== "/") {
     throw redirect("/login");
   }
 }

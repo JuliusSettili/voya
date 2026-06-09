@@ -54,11 +54,13 @@ export default function Navbar() {
             </div>
             <div className="flex-none">
                 <ul className="menu menu-horizontal px-1">
-                <li>
-                    <Link to="/">
-                        Entdecken
-                    </Link>
-                </li>
+                {user && (
+                    <li>
+                        <Link to="/">
+                            Entdecken
+                        </Link>
+                    </li>
+                )}
                 <li>
                     {user?.id ? (
                         <details>
@@ -76,7 +78,9 @@ export default function Navbar() {
                         </ul>
                         </details>
                     ) : (
-                        <span className="px-3 py-2 text-sm text-gray-500">Account</span>
+                        <Link to="/login">
+                            Login
+                        </Link>
                     )}
                 </li>
                 </ul>
