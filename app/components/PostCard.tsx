@@ -1,5 +1,5 @@
 import ReactCountryFlag from "react-country-flag";
-import { Link, useFetcher, useLocation } from "react-router";
+import { Link, useLocation } from "react-router";
 import type { Country, Profile } from "../../api/supabaseClient";
 import { MdBlock, MdDeleteOutline, MdLockOpen, MdLockOutline, MdPublic } from "react-icons/md";
 import BlockPostModal from "./BlockPostModal";

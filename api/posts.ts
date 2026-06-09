@@ -190,3 +190,19 @@ export async function updatePostPrivacy(id: string, isPrivate: boolean): Promise
     throw new Error(error.message);
   }
 }
+
+export async function updatePostData(
+    id: number | string,
+    updatedData: { title?: string; description?: string }
+): Promise<void> {
+  const supabase = getSupabaseClient();
+
+  const { error } = await supabase
+      .from("posts")
+      .update(updatedData as never)
+      .eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}

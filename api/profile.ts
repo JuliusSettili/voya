@@ -49,6 +49,10 @@ export async function unblockProfile(profileId: string): Promise<void> {
 
 export async function updateProfileDisplayName(profileId: string, displayName: string): Promise<void> {
   const supabase = getSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Nicht angemeldet");
+
   const { error } = await supabase
     .from("profiles")
     .update({ display_name: displayName })
@@ -59,6 +63,13 @@ export async function updateProfileDisplayName(profileId: string, displayName: s
       throw new Error("Der Anzeigename ist bereits vergeben. Bitte wählen Sie einen anderen Namen.");
     }
     throw new Error(error.message);
+  }
+
+  const { error: authError } = await supabase.auth.updateUser({
+    data: { display_name: displayName }
+  });
+  if (authError) {
+    throw new Error(authError.message);
   }
 }
 
