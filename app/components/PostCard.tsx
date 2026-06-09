@@ -5,6 +5,7 @@ import { MdBlock, MdDeleteOutline, MdLockOpen, MdLockOutline, MdPublic } from "r
 import BlockPostModal from "./BlockPostModal";
 import UnblockPostModal from "./UnblockPostModal";
 import TogglePrivacyModal from "./TogglePrivacyModal";
+import DeletePostModal from "~/components/DeletePostModal";
 
 export default function PostCard(props: {
     title: string;
@@ -20,7 +21,6 @@ export default function PostCard(props: {
 }) {
 
     const { title, description, imageUrl, countries, link, profile, postId, isAdmin, isBlocked, isPrivate } = props;
-    const fetcher = useFetcher();
 
     const location = useLocation();
     const isProfilePage = location.pathname.includes("/profile");
@@ -37,6 +37,11 @@ export default function PostCard(props: {
 
     const openTogglePrivacyModal = () => {
         const modal = document.getElementById(`toggle-privacy-modal-${postId}`) as HTMLDialogElement;
+        if (modal) modal.showModal();
+    };
+
+    const openDeleteModal = () => {
+        const modal = document.getElementById(`delete-modal-${postId}`) as HTMLDialogElement;
         if (modal) modal.showModal();
     };
 
@@ -122,20 +127,22 @@ export default function PostCard(props: {
 
                         {/* Löschen Button (nur bei Beiträgen auf eigener Profilseite sichtbar) */}
                         {isProfilePage && (
-                            <fetcher.Form method="post" className="ml-2">
-                                <input type="hidden" name="intent" value="delete-post" />
-                                <input type="hidden" name="postId" value={String(postId)} />
+                            <div className="ml-2">
                                 <button
-                                    type="submit"
+                                    type="button"
                                     aria-label="Löschen"
                                     className="btn btn-square btn-error btn-sm"
                                     title="Löschen"
-                                    disabled={fetcher.state !== "idle"}
-                                    onClick={(e) => e.stopPropagation()}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        openDeleteModal();
+                                    }}
                                 >
                                     <MdDeleteOutline size={16} />
                                 </button>
-                            </fetcher.Form>
+                                <DeletePostModal postId={postId} />
+                            </div>
                         )}
                     </div>
                 </div>
