@@ -41,7 +41,7 @@ export async function clientAction({
 
       console.log("Sperren-Daten empfangen -> PostID:", postId, "| Reason:", reason);
 
-      if (postId && reason.length >= 5) {
+      if (postId && reason.trim().length > 0) {
           try {
               console.log("Sende Anfrage an Supabase..."); // DEBUG 3
               await blockPost(postId, reason);
@@ -50,7 +50,7 @@ export async function clientAction({
               console.error("FEHLER VON SUPABASE:", error); // DEBUG 5
           }
       } else {
-          console.warn("Abbruch: PostID fehlt oder Begründung ist kürzer als 5 Zeichen!");
+          console.warn("Abbruch: PostID fehlt");
       }
   }
 
