@@ -56,7 +56,7 @@ export async function fetchPostsByProfileId(profileId: string): Promise<Post[]> 
   return data ?? [];
 }
 
-export async function fetchPost(id: string): Promise<Post> {
+export async function fetchPost(id: string | number): Promise<Post> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("posts")
@@ -204,5 +204,33 @@ export async function updatePostData(
 
   if (error) {
     throw new Error(error.message);
+  }
+}
+
+export async function updatePostCountries(postId: number | string, countryIds: number[]): Promise<void> {
+  const supabase = getSupabaseClient();
+
+  const { error: deleteError } = await supabase
+      .from("post_country_relation")
+      .delete()
+      .eq("post_id", postId);
+
+  if (deleteError) {
+    throw new Error(deleteError.message);
+  }
+
+  if (countryIds.length > 0) {
+    const { error: insertError } = await supabase
+        .from("post_country_relation")
+        .insert(
+            countryIds.map((countryId) => ({
+              post_id: postId,
+              country_id: countryId,
+            })) as any
+        );
+
+    if (insertError) {
+      throw new Error(insertError.message);
+    }
   }
 }

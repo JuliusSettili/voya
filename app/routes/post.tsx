@@ -1,5 +1,5 @@
 import type { Route } from "./+types/post";
-import { fetchPost } from "../../api/posts";
+import {fetchPost, updatePostCountries} from "../../api/posts";
 import { useEffect, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { Link } from "react-router";
@@ -8,6 +8,7 @@ import { deleteSubPost, addEmptySubPost } from "../../api/subposts";
 import { postBelongsToCurrentUser } from "../../api/posts";
 import EditField from "~/components/EditField";
 import { updatePostData } from "../../api/posts";
+import CountriesInput from "~/components/CountriesInput";
 
 export async function clientLoader({
   params,
@@ -73,6 +74,18 @@ export default function PostPage({
     setPostState((p) => ({ ...p, description: newDescription }));
   };
 
+  const handleEditCountries = async (countryIds: number[]) => {
+    try {
+      await updatePostCountries(postState.id, countryIds);
+
+      const updatedPost = await fetchPost(postState.id);
+      setPostState(updatedPost);
+    } catch (error) {
+      console.error("Fehler beim Speichern der Länder:", error);
+      alert("Fehler beim Speichern! Hast du die INSERT und DELETE Policies für 'post_country_relation' angelegt?");
+    }
+  };
+
   return (
     <main className="p-6 grid grid-cols-4 gap-6 [grid-template-areas:'image_title_title_flags''description_description_description_description''content_content_content_content'] lg:[grid-template-areas:'title_flags_flags_image''description_description_description_image''content_content_content_image']">
       <img className="[grid-area:image]" src={postState.title_image_url} alt={postState.title} />
@@ -86,10 +99,19 @@ export default function PostPage({
         )}
         <Link to={`/user/${postState.profiles.id}`} className="text-sm text-gray-600">@{postState.profiles.display_name}</Link>
       </div>
-      <div className="mr-3 [grid-area:flags] justify-self-end flex gap-2">
-        {postState.countries.map((country) => (
-          <ReactCountryFlag key={country.id} countryCode={country.code} svg />
-        ))}
+      <div className="mr-3 [grid-area:flags] justify-self-end flex items-center gap-2 relative z-50">
+        {belongsToUser ? (
+            <div className="min-w-[200px]">
+              <CountriesInput
+                  value={postState.countries.map(country => country.id)}
+                  onChange={handleEditCountries}
+              />
+            </div>
+        ) : (
+            postState.countries.map((country) => (
+                <ReactCountryFlag key={country.id} countryCode={country.code} svg />
+            ))
+        )}
       </div>
       <div className="[grid-area:description]">
         {belongsToUser ? (
