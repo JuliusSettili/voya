@@ -4,7 +4,9 @@ import { getUser } from "../../api/auth";
 export async function authGuardMiddleware({ pattern }: { pattern: string }) {
   const user = await getUser();
 
-  if (!user && pattern !== "/") {
+  const isPublicRoute = pattern === "/" || pattern.startsWith("/post") || pattern.startsWith("post/");
+
+  if (!user && !isPublicRoute) {
     throw redirect("/login");
   }
 }
