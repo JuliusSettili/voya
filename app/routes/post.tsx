@@ -2,7 +2,6 @@ import type { Route } from "./+types/post";
 import {fetchPost, updatePostCountries} from "../../api/posts";
 import { useEffect, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
-import { Link } from "react-router";
 import { SubPost } from "~/components/SubPost";
 import { deleteSubPost, addEmptySubPost } from "../../api/subposts";
 import { postBelongsToCurrentUser } from "../../api/posts";
@@ -97,7 +96,7 @@ export default function PostPage({
         ) : (
             <h1 className="mb-1 text-2xl font-semibold">{postState.title}</h1>
         )}
-        <Link to={`/user/${postState.profiles.id}`} className="text-sm text-gray-600">@{postState.profiles.display_name}</Link>
+        <div className="text-sm text-gray-600">@{postState.profiles.display_name}</div>
       </div>
       <div className="mr-3 [grid-area:flags] justify-self-end flex items-center gap-2 relative z-50">
         {belongsToUser ? (
