@@ -7,24 +7,41 @@ import { getSupabaseClient } from '../../api/supabaseClient';
 export default function Navbar() {
     const navigate = useNavigate();
     const [user, setUser] = useState<User | null>(null);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [,setIsLoggingOut] = useState(false);
 
     useEffect(() => {
         const supabase = getSupabaseClient();
-
         let isMounted = true;
 
-        async function loadCurrentUser() {
-            const { data } = await supabase.auth.getUser();
-            if (isMounted) {
-                setUser(data.user ?? null);
+        async function loadUserAndRole(currentUser: User | null) {
+            if (!isMounted) return;
+            setUser(currentUser);
+
+            if (currentUser) {
+                const { data } = await supabase
+                    .from('profiles')
+                    .select('role_id')
+                    .eq('id', currentUser.id)
+                    .single();
+
+                if (isMounted && data) {
+                    setIsAdmin((data as any).role_id === 0);
+                }
+            } else {
+                if (isMounted) setIsAdmin(false);
             }
         }
 
-        loadCurrentUser();
+        async function init() {
+            const { data } = await supabase.auth.getUser();
+            loadUserAndRole(data.user ?? null);
+        }
+
+        init();
 
         const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
+            loadUserAndRole(session?.user ?? null);
         });
 
         return () => {
@@ -54,35 +71,40 @@ export default function Navbar() {
             </div>
             <div className="flex-none">
                 <ul className="menu menu-horizontal px-1">
-                {user && (
-                    <li>
-                        <Link to="/">
-                            Entdecken
-                        </Link>
-                    </li>
-                )}
-                <li>
-                    {user?.id ? (
-                        <details>
-                        <summary>{user.user_metadata?.display_name ?? 'Account'}</summary>
-                        <ul className="bg-base-100 rounded-t-none p-2 z-50">
-                            <li><Link to={`/profile/${user.id}`}>Profil</Link></li>
-                            <li>
-                                <button
-                                    type="button"
-                                    onClick={handleLogout}
-                                >
-                                    Abmelden
-                                </button>
-                            </li> 
-                        </ul>
-                        </details>
-                    ) : (
-                        <Link to="/login">
-                            Login
-                        </Link>
+                    {user && (
+                        <li>
+                            <Link to="/">
+                                Entdecken
+                            </Link>
+                        </li>
                     )}
-                </li>
+                    <li>
+                        {user?.id ? (
+                            <details>
+                                <summary>{user.user_metadata?.display_name ?? 'Account'}</summary>
+                                <ul className="bg-base-100 rounded-t-none p-2 z-50 absolute right-0">
+                                    <li><Link to={`/profile/${user.id}`}>Profil</Link></li>
+
+                                    {isAdmin && (
+                                        <li><Link to="/nutzerverwaltung">Benutzerverwaltung</Link></li>
+                                    )}
+
+                                    <li>
+                                        <button
+                                            type="button"
+                                            onClick={handleLogout}
+                                        >
+                                            Abmelden
+                                        </button>
+                                    </li>
+                                </ul>
+                            </details>
+                        ) : (
+                            <Link to="/login">
+                                Login
+                            </Link>
+                        )}
+                    </li>
                 </ul>
             </div>
         </div>

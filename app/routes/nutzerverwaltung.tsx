@@ -27,14 +27,12 @@ export default function AdminPage({
     } else {
       await unblockProfile(profileId);
     }
-    // Refetch profiles to update the table
     const updatedProfiles = await fetchProfiles();
     setProfiles(updatedProfiles);
   };
 
   const handleRoleChange = async (profileId: string, roleId: number) => {
     await updateProfileRole(profileId, roleId);
-    // Refetch profiles to update the table
     const updatedProfiles = await fetchProfiles();
     setProfiles(updatedProfiles);
   };
