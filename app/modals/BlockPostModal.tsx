@@ -9,7 +9,7 @@ export default function BlockPostModal({ postId }: { postId: number }) {
         const modal = document.getElementById(`block-modal-${postId}`) as HTMLDialogElement;
         if (modal) {
             modal.close();
-            setErrorMsg(""); // Fehler beim Schließen zurücksetzen
+            setErrorMsg("");
         }
     };
 

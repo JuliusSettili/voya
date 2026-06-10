@@ -12,6 +12,6 @@ export default [
     route("post/:id", "./routes/post.tsx"),
     route("nutzerverwaltung", "./routes/nutzerverwaltung.tsx"),
     route("profile/:id", "./routes/profile.tsx"),
-    route("new-post", "./routes/new-post.tsx"),
+    route("new-post", "./routes/newPost.tsx"),
   ]),
 ] satisfies RouteConfig;

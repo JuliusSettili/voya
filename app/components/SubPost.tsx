@@ -6,8 +6,8 @@ import type { SubPost as SubPostType, SubPostImage } from "../../api/supabaseCli
 import EditField from "./EditField";
 import { addSubPostImage, deleteSubPostImage, getSubPostById, updateSubPost } from "../../api/subposts";
 import { uploadPostImage } from "../../api/posts";
-import DeleteImageModal from "./DeleteImageModal";
-import DeleteSubPostModal from "./DeleteSubpostModal";
+import DeleteImageModal from "../modals/DeleteImageModal";
+import DeleteSubPostModal from "../modals/DeleteSubpostModal";
 
 export function SubPost({
   subPost,

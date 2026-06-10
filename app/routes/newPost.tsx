@@ -3,7 +3,7 @@ import { MdFileUpload } from "react-icons/md";
 import { useState } from "react";
 import { createPost, uploadPostImage } from "../../api/posts";
 import CountriesInput from "~/components/CountriesInput";
-import type { Route } from "./+types/new-post";
+import type { Route } from "./+types/newPost";
 
 type NewPostActionData = {
   errors?: {

@@ -2,10 +2,10 @@ import ReactCountryFlag from "react-country-flag";
 import { Link, useLocation } from "react-router";
 import type { Country, Profile } from "../../api/supabaseClient";
 import { MdBlock, MdDeleteOutline, MdLockOpen, MdLockOutline, MdPublic } from "react-icons/md";
-import BlockPostModal from "./BlockPostModal";
-import UnblockPostModal from "./UnblockPostModal";
-import TogglePrivacyModal from "./TogglePrivacyModal";
-import DeletePostModal from "~/components/DeletePostModal";
+import BlockPostModal from "../modals/BlockPostModal";
+import UnblockPostModal from "../modals/UnblockPostModal";
+import TogglePrivacyModal from "../modals/TogglePrivacyModal";
+import DeletePostModal from "~/modals/DeletePostModal";
 
 export default function PostCard(props: {
     title: string;
