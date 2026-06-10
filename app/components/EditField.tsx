@@ -18,14 +18,16 @@ export default function EditField({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value);
+  const [error, setError] = useState<string | null>(null);
 
   const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event?.preventDefault();
     if (isEditing) {
       if (inputValue.trim() === "") {
-        alert("Bitte gib einen Text ein! Das Feld darf nicht leer gelassen werden.");
+        setError("Feld darf nicht leer sein!");
         return;
       }
+      setError(null);
       onChange(inputValue);
     }
     setIsEditing(!isEditing);
@@ -41,9 +43,12 @@ export default function EditField({
           type="text"
           placeholder={placeholderValue}
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            if (error) setError(null);
+          }}
           readOnly={!isEditing}
-          className="input"
+          className={`input input-bordered ${error ? "input-error" : ""}`}
       />)}
       <button
         type="button"
@@ -53,6 +58,11 @@ export default function EditField({
       >
         {isEditing ? <MdCheck size={16} /> : <MdEdit size={16} />}
       </button>
+      {error && (
+          <span className="text-error text-sm ml-2">
+          {error}
+        </span>
+      )}
     </div>
   );
 }
