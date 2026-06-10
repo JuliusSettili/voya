@@ -86,7 +86,7 @@ export default function PostPage({
         )}
         <Link to={`/user/${postState.profiles.id}`} className="text-sm text-gray-600">@{postState.profiles.display_name}</Link>
       </div>
-      <div className="mr-3 [grid-area:flags] justify-self-end">
+      <div className="mr-3 [grid-area:flags] justify-self-end flex gap-2">
         {postState.countries.map((country) => (
           <ReactCountryFlag key={country.id} countryCode={country.code} svg />
         ))}
