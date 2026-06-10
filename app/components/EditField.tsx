@@ -6,11 +6,13 @@ import { useState } from "react";
 import { MdEdit, MdCheck } from "react-icons/md";
 
 export default function EditField({
-  value,
-  onChange,
-  className,
+                                    value,
+                                    placeholderValue,
+                                    onChange,
+                                    className,
 }: {
   value: string;
+  placeholderValue: string;
   onChange: (newValue: string) => void;
   className?: string;
 }) {
@@ -20,6 +22,10 @@ export default function EditField({
   const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event?.preventDefault();
     if (isEditing) {
+      if (inputValue.trim() === "") {
+        alert("Bitte gib einen Text ein! Das Feld darf nicht leer gelassen werden.");
+        return;
+      }
       onChange(inputValue);
     }
     setIsEditing(!isEditing);
@@ -28,11 +34,12 @@ export default function EditField({
   return (
     <div className={`flex items-center gap-2 ${className || ""}`}>
       {!isEditing && (
-        inputValue
+          inputValue || <span className="text-gray-400 italic text-sm font-normal">{placeholderValue}</span>
       )}
       {isEditing && (
         <input
           type="text"
+          placeholder={placeholderValue}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           readOnly={!isEditing}

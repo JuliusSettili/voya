@@ -79,7 +79,7 @@ export default function PostPage({
       <div className="[grid-area:title]">
         {belongsToUser ? (
             <div className="mb-1 text-2xl font-semibold">
-              <EditField value={postState.title} onChange={handleEditTitle} />
+              <EditField placeholderValue="Titel Post" value={postState.title} onChange={handleEditTitle} />
             </div>
         ) : (
             <h1 className="mb-1 text-2xl font-semibold">{postState.title}</h1>
@@ -93,7 +93,7 @@ export default function PostPage({
       </div>
       <div className="[grid-area:description]">
         {belongsToUser ? (
-            <EditField value={postState.description} onChange={handleEditDescription} />
+            <EditField placeholderValue="Beschreibung Post" value={postState.description} onChange={handleEditDescription} />
         ) : (
             <p>{postState.description}</p>
         )}

@@ -30,10 +30,12 @@ export function SubPost({
 
   const handleEditTitle = (newTitle: string) => {
     updateSubPost(subPost.id, { title: newTitle });
+    setSubPostState(prev => ({ ...prev, title: newTitle }));
   };
 
   const handleEditContent = (newContent: string) => {
     updateSubPost(subPost.id, { content: newContent });
+    setSubPostState(prev => ({ ...prev, content: newContent }));
   }
 
   const handleDeleteSubPostImage = async (imageId: number) => {
@@ -69,12 +71,25 @@ export function SubPost({
       setSubPostState(updatedSubPost);
     }
   };
+
+  const isTitleEmpty = !subPostState.title || subPostState.title.trim() === "";
+  const isContentEmpty = !subPostState.content || subPostState.content.trim() === "";
+  const hasNoImages = !subPostState.sub_post_images || subPostState.sub_post_images.length === 0;
+
+  const isEmpty = isTitleEmpty && isContentEmpty && hasNoImages;
+
+  // Wenn der Subpost komplett leer ist UND der Nutzer nicht der Besitzer ist -> Nichts rendern!
+  if (isEmpty && !postBelongsToCurrentUser) {
+    return null;
+  }
+
   return (
     <details className={`collapse collapse-arrow bg-base-100 border border-base-300 ${containerClass}`} name="my-accordion-det-1">
       <summary className="collapse-title flex items-center justify-between gap-2 font-semibold">
         <div className="min-w-0 flex-1 truncate">
           {postBelongsToCurrentUser && (
             <EditField
+              placeholderValue="Titel Subpost"
               value={subPostState.title}
               onChange={handleEditTitle}
             />
@@ -100,6 +115,7 @@ export function SubPost({
       <div className="collapse-content text-sm">
         {postBelongsToCurrentUser && (
           <EditField
+            placeholderValue="Beschreibung Subpost"
             value={subPostState.content}
             onChange={handleEditContent}
             className="mb-4"
