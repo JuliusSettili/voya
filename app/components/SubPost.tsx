@@ -1,12 +1,13 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { MdDeleteOutline, MdAdd } from "react-icons/md";
-import { useState, type MouseEvent } from "react";
+import { useState } from "react";
 import type { SubPost as SubPostType, SubPostImage } from "../../api/supabaseClient";
 import EditField from "./EditField";
 import { addSubPostImage, deleteSubPostImage, getSubPostById, updateSubPost } from "../../api/subposts";
 import { uploadPostImage } from "../../api/posts";
 import DeleteImageModal from "./DeleteImageModal";
+import DeleteSubPostModal from "./DeleteSubpostModal";
 
 export function SubPost({
   subPost,
@@ -21,12 +22,6 @@ export function SubPost({
 }) {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [subPostState, setSubPostState] = useState(subPost);
-
-  const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onDelete?.(subPost.id);
-  };
 
   const handleEditTitle = (newTitle: string) => {
     updateSubPost(subPost.id, { title: newTitle });
@@ -54,6 +49,11 @@ export function SubPost({
     if (modal) modal.showModal();
   };
 
+  const openDeleteSubpostModal = () => {
+    const modal = document.getElementById(`delete-subpost-modal-${subPost.id}`) as HTMLDialogElement;
+    if (modal) modal.showModal();
+  };
+
   const handleEditImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -78,7 +78,6 @@ export function SubPost({
 
   const isEmpty = isTitleEmpty && isContentEmpty && hasNoImages;
 
-  // Wenn der Subpost komplett leer ist UND der Nutzer nicht der Besitzer ist -> Nichts rendern!
   if (isEmpty && !postBelongsToCurrentUser) {
     return null;
   }
@@ -101,15 +100,25 @@ export function SubPost({
           )}
         </div>
         {onDelete ? (
-          <button
-            type="button"
-            onClick={handleDelete}
-            aria-label="Löschen"
-            className="btn btn-square btn-error btn-sm ml-2"
-            title="Löschen"
-          >
-            <MdDeleteOutline size={16} />
-          </button>
+            <>
+              <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openDeleteSubpostModal();
+                  }}
+                  aria-label="Löschen"
+                  className="btn btn-square btn-error btn-sm ml-2"
+                  title="Löschen"
+              >
+                <MdDeleteOutline size={16} />
+              </button>
+              <DeleteSubPostModal
+                  subPostId={subPost.id}
+                  onConfirm={() => onDelete(subPost.id)}
+              />
+            </>
         ) : null}
       </summary>
       <div className="collapse-content text-sm">
