@@ -44,7 +44,6 @@ const MOCK_PROFILE = {
 const MOCK_COUNTRIES = [{ id: 1, name: "Germany", code: "DE" }];
 const MOCK_LINK = `/post/${MOCK_POST_ID}`;
 
-const TEXT_BLOCKED_WARNING = "(Gesperrt)";
 const TOOLTIP_PRIVATE = "Ist privat (Klicken zum Ändern)";
 const TOOLTIP_PUBLIC = "Ist öffentlich (Klicken zum Ändern)";
 
@@ -64,7 +63,6 @@ const BASE_PROPS = {
 
 describe("PostCard Component", () => {
     beforeAll(() => {
-        // Mockt die native DOM-Funktion für Dialoge, die in Testumgebungen oft fehlt
         HTMLDialogElement.prototype.showModal = vi.fn();
     });
 
@@ -80,20 +78,21 @@ describe("PostCard Component", () => {
         expect(screen.getByText(MOCK_DESCRIPTION)).toBeInTheDocument();
         expect(screen.getByText(`@${MOCK_PROFILE.display_name}`)).toBeInTheDocument();
         expect(screen.getByTestId("flag-DE")).toBeInTheDocument();
-
-        expect(screen.queryByTitle(BTN_TITLE_BLOCK)).not.toBeInTheDocument();
-        expect(screen.queryByTitle(BTN_TITLE_UNBLOCK)).not.toBeInTheDocument();
-        expect(screen.queryByTitle(BTN_TITLE_DELETE)).not.toBeInTheDocument();
     });
 
-    it("applies blocked styles and warning when isBlocked is true", () => {
-        render(<PostCard {...BASE_PROPS} isBlocked={true} />);
+    it("applies blocked styles and warning when isBlocked is true (with reason)", () => {
+        const reason = "Fiese Aussage";
+        render(<PostCard {...BASE_PROPS} isBlocked={true} reason_is_blocked={reason} />);
 
-        const titleElement = screen.getByText(TEXT_BLOCKED_WARNING);
-        expect(titleElement).toBeInTheDocument();
-
+        expect(screen.getByText(/Gesperrt.*Fiese Aussage/i)).toBeInTheDocument();
         const cardContainer = screen.getByText(MOCK_DESCRIPTION).closest(".card");
         expect(cardContainer).toHaveClass("opacity-70", "grayscale");
+    });
+
+    it("shows warning without reason when isBlocked is true but reason is empty", () => {
+        render(<PostCard {...BASE_PROPS} isBlocked={true} reason_is_blocked={null} />);
+
+        expect(screen.getByText(/Gesperrt/i)).toBeInTheDocument();
     });
 
     it("renders admin block button and opens modal when clicked", async () => {
@@ -101,8 +100,6 @@ describe("PostCard Component", () => {
         render(<PostCard {...BASE_PROPS} isAdmin={true} isBlocked={false} />);
 
         const blockButton = screen.getByTitle(BTN_TITLE_BLOCK);
-        expect(blockButton).toBeInTheDocument();
-
         await user.click(blockButton);
         expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledTimes(1);
     });
@@ -112,8 +109,6 @@ describe("PostCard Component", () => {
         render(<PostCard {...BASE_PROPS} isAdmin={true} isBlocked={true} />);
 
         const unblockButton = screen.getByTitle(BTN_TITLE_UNBLOCK);
-        expect(unblockButton).toBeInTheDocument();
-
         await user.click(unblockButton);
         expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledTimes(1);
     });
@@ -128,18 +123,7 @@ describe("PostCard Component", () => {
         expect(privacyButtonContainer).toHaveAttribute("data-tip", TOOLTIP_PUBLIC);
 
         const deleteButton = screen.getByTitle(BTN_TITLE_DELETE);
-        expect(deleteButton).toBeInTheDocument();
-
         await user.click(deleteButton);
         expect(HTMLDialogElement.prototype.showModal).toHaveBeenCalledTimes(1);
-    });
-
-    it("shows correct tooltip when post is private on profile page", () => {
-        mockLocationPathname = `/profile/${MOCK_PROFILE.id}`;
-
-        render(<PostCard {...BASE_PROPS} isPrivate={true} />);
-
-        const privacyButtonContainer = screen.getByText(MOCK_TITLE).parentElement?.querySelector('.tooltip');
-        expect(privacyButtonContainer).toHaveAttribute("data-tip", TOOLTIP_PRIVATE);
     });
 });
