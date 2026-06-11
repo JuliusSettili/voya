@@ -43,11 +43,11 @@ export async function clientAction({
 
       if (postId && reason.trim().length > 0) {
           try {
-              console.log("Sende Anfrage an Supabase..."); // DEBUG 3
+              console.log("Sende Anfrage an Supabase...");
               await blockPost(postId, reason);
-              console.log("Erfolgreich in Supabase gespeichert!"); // DEBUG 4
+              console.log("Erfolgreich in Supabase gespeichert!");
           } catch (error) {
-              console.error("FEHLER VON SUPABASE:", error); // DEBUG 5
+              console.error("FEHLER VON SUPABASE:", error);
           }
       } else {
           console.warn("Abbruch: PostID fehlt");

@@ -3,7 +3,7 @@ import { MdFileUpload } from "react-icons/md";
 import { useState } from "react";
 import { createPost, uploadPostImage } from "../../api/posts";
 import CountriesInput from "~/components/CountriesInput";
-import type { Route } from "./+types/newPost";
+import type { Route } from "./+types/new-post";
 
 type NewPostActionData = {
   errors?: {
@@ -22,8 +22,8 @@ export async function clientAction({
   const isPrivate = String(formData.get("is_private") ?? "true") === "true";
   const countryIds = formData
     .getAll("countryIds")
-    .map((countryId) => Number(countryId))
-    .filter((countryId) => Number.isFinite(countryId));
+    .map((countryId: any) => Number(countryId))
+    .filter((countryId: any) => Number.isFinite(countryId));
 
   if (!title) {
     return { errors: { title: "Bitte einen Titel eingeben." } };

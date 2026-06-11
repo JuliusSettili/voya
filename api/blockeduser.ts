@@ -4,7 +4,7 @@ export async function insertBlockedUser(profileId: string, reason: string): Prom
     const supabase = getSupabaseClient();
     const { error: blockReasonError } = await supabase
         .from("blocked_users")
-        .insert({ user_id: profileId, block_text: reason });
+        .insert({ user_id: profileId, block_text: reason } as any);
 
     if (blockReasonError) {
         throw new Error(blockReasonError.message);

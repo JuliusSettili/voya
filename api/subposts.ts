@@ -14,7 +14,7 @@ export default deleteSubPost;
 export async function updateSubPost(id: number, data: { title?: string; content?: string }): Promise<void> {
   const supabase = getSupabaseClient();
 
-  let { error } = await supabase.from("sub_posts").update(data).eq("id", id);
+  let { error } = await supabase.from("sub_posts").update(data as never).eq("id", id);
 
   if (error) {
     throw new Error(error.message);
@@ -27,7 +27,7 @@ export async function addSubPostImage(subPostId: number, imageUrl: string): Prom
   let { error } = await supabase.from("sub_post_images").insert({
     image_url: imageUrl,
     subpost_id: subPostId,
-  });
+  } as never);
 
   if (error) {
     throw new Error(error.message);
@@ -63,7 +63,7 @@ export async function addEmptySubPost(postId: number): Promise<SubPost> {
     title: "",
     content: "",
     post_id: postId,
-  }).select("id, title, content, sub_post_images (id, image_url)").single();
+  } as never).select("id, title, content, sub_post_images (id, image_url)").single();
 
   if (error) {
     throw new Error(error.message);

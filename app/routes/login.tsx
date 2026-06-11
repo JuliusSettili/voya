@@ -1,23 +1,22 @@
 import { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams, useNavigation } from 'react-router';
 import { login } from '../../api/login';
 import InputField from '~/components/InputField';
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const navigation = useNavigation();
     const [searchParams] = useSearchParams();
     const queryError = searchParams.get('error');
     const [error, setError] = useState<string | null>(queryError);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const isSubmitting = navigation.state === "submitting";
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        setIsSubmitting(true);
         setError(null);
 
         const result = await login(new FormData(event.currentTarget));
-
-        setIsSubmitting(false);
 
         if (!result.success) {
             setError(result.error || 'Login fehlgeschlagen');
@@ -28,13 +27,13 @@ export default function LoginPage() {
     }
 
     return (
-            <div className="min-h-screen grid place-content-center p-4 place-items-center">
+        <div className="min-h-screen grid place-content-center p-4 place-items-center">
             <form onSubmit={handleSubmit}>
                 {error ? <div role="alert" className="alert alert-error mb-5">
                     <span>{error}</span>
                 </div> : null}
 
-                <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+                <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4" disabled={isSubmitting}>
                     <legend className="fieldset-legend">Willkommen zurück!</legend>
                     <p className='mb-3'>Bitte melde dich mit deinen Zugangsdaten an</p>
                     <InputField

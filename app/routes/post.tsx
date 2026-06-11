@@ -44,6 +44,12 @@ export default function PostPage({
 
   const createEmptySubPost = async () => {
     const newSubPost = await addEmptySubPost(postState.id);
+
+    if (!newSubPost) {
+      console.error("Fehler: API hat kein gültiges SubPost zurückgegeben");
+      return;
+    }
+
     setPostState((p) => ({
       ...p,
       sub_posts: p.sub_posts ? [...p.sub_posts, newSubPost] : [newSubPost],

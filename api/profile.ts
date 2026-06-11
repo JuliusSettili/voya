@@ -20,7 +20,7 @@ export async function blockProfile(profileId: string, reason: string): Promise<v
   const supabase = getSupabaseClient();
   const { error: profileError } = await supabase
     .from("profiles")
-    .update({ blocked: true })
+    .update({ blocked: true } as never)
     .eq("id", profileId);
 
   if (profileError) {
@@ -36,7 +36,7 @@ export async function unblockProfile(profileId: string): Promise<void> {
   const supabase = getSupabaseClient();
   const { error } = await supabase
     .from("profiles")
-    .update({ blocked: false})
+    .update({ blocked: false} as never)
     .eq("id", profileId);
 
   if (error) {
@@ -55,7 +55,7 @@ export async function updateProfileDisplayName(profileId: string, displayName: s
 
   const { error } = await supabase
     .from("profiles")
-    .update({ display_name: displayName })
+    .update({ display_name: displayName } as never)
     .eq("id", profileId);
 
   if (error) {
@@ -77,7 +77,7 @@ export async function updateProfileRole(profileId: string, roleId: number): Prom
   const supabase = getSupabaseClient();
   const { error } = await supabase
     .from("profiles")
-    .update({ role_id: roleId })
+    .update({ role_id: roleId } as never)
     .eq("id", profileId);
 
   if (error) {

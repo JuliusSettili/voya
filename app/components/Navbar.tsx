@@ -86,7 +86,7 @@ export default function Navbar() {
                                     <li><Link to={`/profile/${user.id}`}>Profil</Link></li>
 
                                     {isAdmin && (
-                                        <li><Link to="/nutzerverwaltung">Benutzerverwaltung</Link></li>
+                                        <li><Link to="/admin-page">Benutzerverwaltung</Link></li>
                                     )}
 
                                     <li>
