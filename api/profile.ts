@@ -75,6 +75,14 @@ export async function updateProfileDisplayName(profileId: string, displayName: s
 
 export async function updateProfileRole(profileId: string, roleId: number): Promise<void> {
   const supabase = getSupabaseClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Nicht authentifiziert");
+
+  if (user.id === profileId) {
+    throw new Error("Sicherheitsfehler: Du kannst deine eigene Rolle nicht ändern.");
+  }
   const { error } = await supabase
     .from("profiles")
     .update({ role_id: roleId } as never)

@@ -2,17 +2,20 @@ import { useState } from "react";
 import { fetchProfiles, updateProfileRole, blockProfile, unblockProfile } from "../../api/profile";
 import { fetchRoles } from "../../api/roles";
 import type { Route } from "./+types/admin-page";
+import {getSupabaseClient} from "../../api/supabaseClient";
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: "Admin Dashboard" }];
 }
 
 export async function clientLoader({}: Route.ClientLoaderArgs) {
+    const supabase = getSupabaseClient(); // Oder wie auch immer du den Client holst
+    const { data: { user } } = await supabase.auth.getUser();
     const [profiles, roles] = await Promise.all([fetchProfiles(), fetchRoles()]);
-    return { profiles, roles };
+    return { profiles, roles, currentUserId: user?.id };
 }
 
-export default function AdminPage({ loaderData: { profiles: initialProfiles, roles } }: Route.ComponentProps) {
+export default function AdminPage({ loaderData: { profiles: initialProfiles, roles, currentUserId } }: Route.ComponentProps) {
     const [profiles, setProfiles] = useState(initialProfiles);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -72,7 +75,10 @@ export default function AdminPage({ loaderData: { profiles: initialProfiles, rol
                             <td>{profile.email}</td>
                             <td>
                                 <button
-                                    className={`btn btn-sm ${profile.blocked ? "btn-error" : "btn-success"}`}
+                                    disabled={profile.id === currentUserId}
+                                    className={`btn btn-sm ${profile.blocked ? "btn-error" : "btn-success"} ${
+                                        profile.id === currentUserId ? "opacity-50 cursor-not-allowed" : ""
+                                    }`}
                                     onClick={() => (document.getElementById(`modal_${profile.id}`) as HTMLDialogElement)?.showModal()}
                                 >
                                     {profile.blocked ? "Gesperrt" : "Aktiv"}
@@ -112,7 +118,10 @@ export default function AdminPage({ loaderData: { profiles: initialProfiles, rol
                             <td>
                                 <select
                                     defaultValue={profile.roles?.id}
-                                    className="select select-bordered select-sm w-full max-w-[150px]"
+                                    disabled={profile.id === currentUserId}
+                                    className={`select select-bordered select-sm w-full max-w-[150px] ${
+                                        profile.id === currentUserId ? "opacity-50 cursor-not-allowed" : ""
+                                    }`}
                                     onChange={(e) => handleRoleChange(profile.id, e.target.value)}
                                 >
                                     {roles.map((role) => (
