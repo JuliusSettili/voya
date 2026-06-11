@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import LoginPage from "./login";
+import Login from "./login";
 import { login } from "../../api/login";
 import { useNavigate, useSearchParams, useNavigation } from "react-router";
 
@@ -35,7 +35,7 @@ describe("LoginPage Component", () => {
     });
 
     it("renders login form correctly", () => {
-        render(<LoginPage />);
+        render(<Login />);
         expect(screen.getByText("Willkommen zurück!")).toBeInTheDocument();
         expect(screen.getByLabelText(/E-Mail Adresse/i)).toBeInTheDocument();
         expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
@@ -44,7 +44,7 @@ describe("LoginPage Component", () => {
     it("navigates to home on successful login", async () => {
         (login as any).mockResolvedValue({ success: true });
 
-        render(<LoginPage />);
+        render(<Login />);
 
         fireEvent.submit(screen.getByRole("button", { name: /login/i }).closest('form')!);
 
@@ -57,7 +57,7 @@ describe("LoginPage Component", () => {
     it("displays error message on failed login", async () => {
         (login as any).mockResolvedValue({ success: false, error: "Ungültige Daten" });
 
-        render(<LoginPage />);
+        render(<Login />);
 
         fireEvent.submit(screen.getByRole("button", { name: /login/i }).closest('form')!);
 
@@ -69,7 +69,7 @@ describe("LoginPage Component", () => {
     it("shows loading state while submitting", async () => {
         (useNavigation as any).mockReturnValue({ state: "submitting" });
 
-        render(<LoginPage />);
+        render(<Login />);
 
         const submitButton = screen.getByRole("button", { name: /login/i });
 
