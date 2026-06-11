@@ -31,7 +31,7 @@ export async function fetchPosts(): Promise<Post[]> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("posts")
-    .select("id, title, description, title_image_url, is_blocked, is_private, countries (id, name, code), profiles (id, display_name)")
+    .select("id, title, description, title_image_url, is_blocked, reason_is_blocked, is_private, countries (id, name, code), profiles (id, display_name)")
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -45,7 +45,7 @@ export async function fetchPostsByProfileId(profileId: string): Promise<Post[]> 
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("posts")
-    .select("id, title, description, title_image_url, is_blocked, is_private, countries (id, name, code), profiles (id, display_name)")
+    .select("id, title, description, title_image_url, is_blocked, reason_is_blocked, is_private, countries (id, name, code), profiles (id, display_name)")
     .eq("user_id", profileId)
     .order("created_at", { ascending: true });
 
@@ -60,7 +60,7 @@ export async function fetchPost(id: string | number): Promise<Post> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("posts")
-    .select("id, title, description, title_image_url, is_blocked, is_private, countries (id, name, code), profiles (id, display_name), sub_posts (id, title, content, sub_post_images (id, image_url))")
+    .select("id, title, description, title_image_url, is_blocked, reason_is_blocked, is_private, countries (id, name, code), profiles (id, display_name), sub_posts (id, title, content, sub_post_images (id, image_url))")
     .eq("id", id)
     .single();
 

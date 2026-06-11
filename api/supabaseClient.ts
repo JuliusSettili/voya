@@ -48,7 +48,7 @@ export type Post = {
   profiles: Profile;
   sub_posts?: SubPost[];
   is_blocked?: boolean;
-  reason_isBlocked?: string | null;
+  reason_is_blocked?: string | null;
   is_private: boolean;
 };
 
@@ -75,7 +75,7 @@ export type Database = {
           profile_id?: string;
           is_private?: boolean;
           is_blocked?: boolean;
-          reason_isBlocked?: string | null;
+          reason_is_blocked?: string | null;
         };
         Update: {
           id?: number;
@@ -85,7 +85,7 @@ export type Database = {
           profile_id?: string;
           is_private?: boolean;
           is_blocked?: boolean;
-          reason_isBlocked?: string | null;
+          reason_is_blocked?: string | null;
         };
       };
       profiles: {

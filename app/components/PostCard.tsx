@@ -17,13 +17,14 @@ export default function PostCard(props: {
     postId: number;
     isAdmin?: boolean;
     isBlocked?: boolean;
+    reason_is_blocked?: string | null;
     isPrivate?: boolean;
 }) {
 
-    const { title, description, imageUrl, countries, link, profile, postId, isAdmin, isBlocked, isPrivate } = props;
+    const { title, description, imageUrl, countries, link, profile, postId, isAdmin, isBlocked, reason_is_blocked, isPrivate } = props;
 
     const location = useLocation();
-    const isProfilePage = location.pathname.includes("/profile");
+    const isProfilePage = location.pathname.startsWith("/profile");
 
     const openBlockModal = () => {
         const modal = document.getElementById(`block-modal-${postId}`) as HTMLDialogElement;
@@ -81,71 +82,81 @@ export default function PostCard(props: {
                         )}
 
                         <Link to={link} className="card-title hover:underline m-0">
-                            {title} {isBlocked && <span className="text-error text-sm font-normal">(Gesperrt)</span>}
+                            {title}
                         </Link>
                     </div>
-                    <div className="flex gap-2 ml-2">
 
-                        {/* Sperren Button & Modal (nur für Admins sichtbar) */}
-                        {isAdmin && (
-                            isBlocked ? (
-                                <>
+                    <div className="flex flex-col items-end gap-1 ml-2">
+                        <div className="flex gap-2">
+                            {/* Sperren Button & Modal (nur für Admins sichtbar) */}
+                            {isAdmin && (
+                                isBlocked ? (
+                                    <>
+                                        <button
+                                            type="button"
+                                            aria-label="Freigeben"
+                                            className="btn btn-square btn-success btn-sm"
+                                            title="Freigeben"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                openUnblockModal();
+                                            }}
+                                        >
+                                            <MdLockOpen size={16} />
+                                        </button>
+                                        <UnblockPostModal postId={postId} />
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            type="button"
+                                            aria-label="Sperren"
+                                            className="btn btn-square btn-warning btn-sm"
+                                            title="Sperren"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                openBlockModal();
+                                            }}
+                                        >
+                                            <MdBlock size={16} />
+                                        </button>
+                                        <BlockPostModal postId={postId} />
+                                    </>
+                                )
+                            )}
+
+                            {/* Löschen Button */}
+                            {isProfilePage && (
+                                <div>
                                     <button
                                         type="button"
-                                        aria-label="Freigeben"
-                                        className="btn btn-square btn-success btn-sm"
-                                        title="Freigeben"
+                                        aria-label="Löschen"
+                                        className="btn btn-square btn-error btn-sm"
+                                        title="Löschen"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            openUnblockModal();
+                                            openDeleteModal();
                                         }}
                                     >
-                                        <MdLockOpen size={16} />
+                                        <MdDeleteOutline size={16} />
                                     </button>
-                                    <UnblockPostModal postId={postId} />
-                                </>
-                            ) : (
-                                <>
-                                    <button
-                                        type="button"
-                                        aria-label="Sperren"
-                                        className="btn btn-square btn-warning btn-sm"
-                                        title="Sperren"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            openBlockModal();
-                                        }}
-                                    >
-                                        <MdBlock size={16} />
-                                    </button>
-                                    <BlockPostModal postId={postId} />
-                                </>
-                            )
-                        )}
+                                    <DeletePostModal postId={postId} />
+                                </div>
+                            )}
+                        </div>
 
-                        {/* Löschen Button (nur bei Beiträgen auf eigener Profilseite sichtbar) */}
-                        {isProfilePage && (
-                            <div className="ml-2">
-                                <button
-                                    type="button"
-                                    aria-label="Löschen"
-                                    className="btn btn-square btn-error btn-sm"
-                                    title="Löschen"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        openDeleteModal();
-                                    }}
-                                >
-                                    <MdDeleteOutline size={16} />
-                                </button>
-                                <DeletePostModal postId={postId} />
-                            </div>
+                        {/* Sperr-Label */}
+                        {isBlocked && (
+                            <span className="text-error text-xs font-semibold uppercase tracking-wider bg-error/10 px-2 py-1 rounded-md">
+                                Gesperrt {reason_is_blocked?.trim() ? `- ${reason_is_blocked.trim()}` : ""}
+                            </span>
                         )}
                     </div>
                 </div>
+
                 <p>{description}</p>
                 <div className="card-actions justify-between items-center">
                     <p>@{profile.display_name}</p>
