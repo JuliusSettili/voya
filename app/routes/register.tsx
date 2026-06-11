@@ -15,7 +15,6 @@ type RegisterErrors = {
 export async function clientAction({ request }: { request: Request }) {
     const formData = await request.formData()
 
-    // Validierung
     const displayName = String(formData.get('displayName') ?? '').trim()
     const email = String(formData.get('email') ?? '').trim()
     const password = String(formData.get('password') ?? '')
@@ -35,14 +34,12 @@ export async function clientAction({ request }: { request: Request }) {
         return { errors }
     }
 
-    // Signup-Aufruf
     const result = await signup(formData)
 
     if (!result.success) {
         return { errors: { general: result.error || 'Registrierung fehlgeschlagen' } }
     }
 
-    // Erfolg - auf Seite bleiben und Nachricht anzeigen
     return { success: true, email }
 }
 
@@ -55,6 +52,9 @@ export default function RegisterPage() {
 
     return (
         <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '1rem' }}>
+            <Link to="/" className="btn btn-ghost btn-lg absolute top-4 left-4">
+                Voya
+            </Link>
             {isSuccessful ? (
                 <div>
                     <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>✓ Erfolgreich registriert!</h1>

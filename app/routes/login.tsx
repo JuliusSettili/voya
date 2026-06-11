@@ -26,6 +26,9 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen grid place-content-center p-4 place-items-center">
+            <Link to="/" className="btn btn-ghost btn-lg absolute top-4 left-4">
+                Voya
+            </Link>
             <form onSubmit={handleSubmit}>
                 {error && (
                     <div role="alert" className="alert alert-error mb-5">
