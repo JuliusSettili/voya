@@ -2,16 +2,17 @@ import { useState } from "react";
 import { fetchProfiles, updateProfileRole, blockProfile, unblockProfile } from "../../api/profile";
 import { fetchRoles } from "../../api/roles";
 import type { Route } from "./+types/admin-page";
-import {getSupabaseClient} from "../../api/supabaseClient";
+import { getSupabaseClient } from "../../api/supabaseClient";
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: "Admin Dashboard" }];
 }
 
 export async function clientLoader({}: Route.ClientLoaderArgs) {
-    const supabase = getSupabaseClient(); // Oder wie auch immer du den Client holst
+    const supabase = getSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     const [profiles, roles] = await Promise.all([fetchProfiles(), fetchRoles()]);
+
     return { profiles, roles, currentUserId: user?.id };
 }
 
@@ -68,69 +69,80 @@ export default function AdminPage({ loaderData: { profiles: initialProfiles, rol
                     </tr>
                     </thead>
                     <tbody>
-                    {filteredProfiles.map((profile, index) => (
-                        <tr key={profile.id} className="hover">
-                            <td>{index + 1}</td>
-                            <td className="font-medium">{profile.display_name}</td>
-                            <td>{profile.email}</td>
-                            <td>
-                                <button
-                                    disabled={profile.id === currentUserId}
-                                    className={`btn btn-sm ${profile.blocked ? "btn-error" : "btn-success"} ${
-                                        profile.id === currentUserId ? "opacity-50 cursor-not-allowed" : ""
-                                    }`}
-                                    onClick={() => (document.getElementById(`modal_${profile.id}`) as HTMLDialogElement)?.showModal()}
-                                >
-                                    {profile.blocked ? "Gesperrt" : "Aktiv"}
-                                </button>
+                    {filteredProfiles.map((profile, index) => {
+                        const blockReason = Array.isArray(profile.blocked_users)
+                            ? profile.blocked_users[0]?.block_text
+                            : profile.blocked_users?.block_text;
 
-                                <dialog id={`modal_${profile.id}`} className="modal">
-                                    <div className="modal-box">
-                                        <h3 className="font-bold text-lg mb-4">{profile.blocked ? "Nutzer entsperren" : "Nutzer sperren"}</h3>
-                                        <p className="mb-4 text-sm text-gray-500">Betrifft: {profile.display_name}</p>
+                        return (
+                            <tr key={profile.id} className="hover">
+                                <td>{index + 1}</td>
+                                <td className="font-medium">{profile.display_name}</td>
+                                <td>{profile.email}</td>
+                                <td>
+                                    <button
+                                        disabled={profile.id === currentUserId}
+                                        className={`btn btn-sm ${profile.blocked ? "btn-error" : "btn-success"} ${
+                                            profile.id === currentUserId ? "opacity-50 cursor-not-allowed" : ""
+                                        }`}
+                                        onClick={() => (document.getElementById(`modal_${profile.id}`) as HTMLDialogElement)?.showModal()}
+                                    >
+                                        {profile.blocked ? "Gesperrt" : "Aktiv"}
+                                    </button>
 
-                                        <fieldset className="fieldset mb-6">
-                                            <legend className="fieldset-legend">Begründung:</legend>
-                                            {profile.blocked ? (
-                                                <input type="text" className="input input-bordered w-full" value={profile.blocked_users?.block_text || "Keine Angabe"} disabled />
-                                            ) : (
-                                                <input id={`reason_${profile.id}`} type="text" placeholder="Grund für Sperrung..." className="input input-bordered w-full" />
-                                            )}
-                                        </fieldset>
+                                    <dialog id={`modal_${profile.id}`} className="modal">
+                                        <div className="modal-box">
+                                            <h3 className="font-bold text-lg mb-4">{profile.blocked ? "Nutzer entsperren" : "Nutzer sperren"}</h3>
+                                            <p className="mb-4 text-sm text-gray-500">Betrifft: {profile.display_name}</p>
 
-                                        <div className="modal-action">
-                                            <form method="dialog" className="flex gap-2">
-                                                <button className="btn btn-ghost">Abbrechen</button>
-                                                <button
-                                                    className={`btn ${profile.blocked ? "btn-success" : "btn-error"}`}
-                                                    onClick={async () => {
-                                                        const reason = (document.getElementById(`reason_${profile.id}`) as HTMLInputElement)?.value || '';
-                                                        await handleBlockToggle(profile.id, !profile.blocked, reason);
-                                                    }}
-                                                >
-                                                    Bestätigen
-                                                </button>
-                                            </form>
+                                            <fieldset className="fieldset mb-6">
+                                                <legend className="fieldset-legend">Begründung:</legend>
+                                                {profile.blocked ? (
+                                                    <input
+                                                        type="text"
+                                                        className="input input-bordered w-full"
+                                                        defaultValue={blockReason || "Keine Angabe"}
+                                                        disabled
+                                                    />
+                                                ) : (
+                                                    <input id={`reason_${profile.id}`} type="text" placeholder="Grund für Sperrung..." className="input input-bordered w-full" />
+                                                )}
+                                            </fieldset>
+
+                                            <div className="modal-action">
+                                                <form method="dialog" className="flex gap-2">
+                                                    <button className="btn btn-ghost">Abbrechen</button>
+                                                    <button
+                                                        className={`btn ${profile.blocked ? "btn-success" : "btn-error"}`}
+                                                        onClick={async () => {
+                                                            const reason = (document.getElementById(`reason_${profile.id}`) as HTMLInputElement)?.value || '';
+                                                            await handleBlockToggle(profile.id, !profile.blocked, reason);
+                                                        }}
+                                                    >
+                                                        Bestätigen
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </div>
-                                </dialog>
-                            </td>
-                            <td>
-                                <select
-                                    defaultValue={profile.roles?.id}
-                                    disabled={profile.id === currentUserId}
-                                    className={`select select-bordered select-sm w-full max-w-[150px] ${
-                                        profile.id === currentUserId ? "opacity-50 cursor-not-allowed" : ""
-                                    }`}
-                                    onChange={(e) => handleRoleChange(profile.id, e.target.value)}
-                                >
-                                    {roles.map((role) => (
-                                        <option key={role.id} value={role.id}>{role.name}</option>
-                                    ))}
-                                </select>
-                            </td>
-                        </tr>
-                    ))}
+                                    </dialog>
+                                </td>
+                                <td>
+                                    <select
+                                        defaultValue={profile.roles?.id}
+                                        disabled={profile.id === currentUserId}
+                                        className={`select select-bordered select-sm w-full max-w-[150px] ${
+                                            profile.id === currentUserId ? "opacity-50 cursor-not-allowed" : ""
+                                        }`}
+                                        onChange={(e) => handleRoleChange(profile.id, e.target.value)}
+                                    >
+                                        {roles.map((role) => (
+                                            <option key={role.id} value={role.id}>{role.name}</option>
+                                        ))}
+                                    </select>
+                                </td>
+                            </tr>
+                        );
+                    })}
                     </tbody>
                 </table>
             </div>

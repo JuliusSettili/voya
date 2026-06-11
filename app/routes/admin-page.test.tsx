@@ -16,8 +16,22 @@ vi.mock("../../api/roles", () => ({
 describe("AdminPage", () => {
     it("deaktiviert das Rollen-Dropdown und den Sperr-Button für den aktuell eingeloggten Benutzer", () => {
         const mockProfiles = [
-            { id: "admin-123", display_name: "IchSelbst", email: "ich@test.de", roles: { id: 1 }, blocked: false },
-            { id: "user-456", display_name: "AndererUser", email: "anderer@test.de", roles: { id: 2 }, blocked: false }
+            {
+                id: "admin-123",
+                display_name: "IchSelbst",
+                email: "ich@test.de",
+                roles: { id: 1 },
+                blocked: false,
+                blocked_users: []
+            },
+            {
+                id: "user-456",
+                display_name: "AndererUser",
+                email: "anderer@test.de",
+                roles: { id: 2 },
+                blocked: true,
+                blocked_users: [{ block_text: "Fiese Aussage" }]
+            }
         ];
 
         const mockRoles = [
