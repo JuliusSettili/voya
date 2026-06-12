@@ -89,12 +89,11 @@ Siehe: [app/routes.ts](../app/routes.ts)
 |---------|-------------|
 | `/` | Startseite |
 | `/post/:id` | Anzeige eines einzelnen Beitrags |
-| `/nutzerverwaltung` | Benutzerverwaltung für Administratoren |
+| `/admin-page` | Benutzerverwaltung für Administratoren |
 | `/profile/:id` | Benutzerprofil |
 | `/new-post` | Erstellen eines neuen Beitrags |
 | `/login` | Benutzeranmeldung |
 | `/register` | Benutzerregistrierung |
-| `/blocked` | Seite für gesperrte Inhalte oder Benutzer |
 | `/404` | Fehlerseite (Nicht gefunden) |
 
 ### Beispiele für Loader und Actions
