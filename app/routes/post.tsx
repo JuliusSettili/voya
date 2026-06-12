@@ -122,7 +122,8 @@ export default function PostPage({
             onProceed={() => blocker.proceed?.()}
             onCancel={() => blocker.reset?.()}
         />
-        <main className="p-6 grid grid-cols-4 gap-6 [grid-template-areas:'image_title_title_flags''description_description_description_description''content_content_content_content'] lg:[grid-template-areas:'title_flags_flags_image''description_description_description_image''content_content_content_image']">
+        <main className="p-6 grid grid-cols-1 lg:grid-cols-4 gap-6 [grid-template-areas:'image'_'title'_'flags'_'description'_'content']
+        lg:[grid-template-areas:'title_flags_flags_image''description_description_description_image''content_content_content_image']">
           <img className="[grid-area:image]" src={postState.title_image_url} alt={postState.title} />
           <div className="[grid-area:title]">
             {belongsToUser ? (
@@ -139,8 +140,7 @@ export default function PostPage({
             )}
             <div className="text-sm text-gray-600">@{postState.profiles.display_name}</div>
           </div>
-          <div className="mr-3 [grid-area:flags] justify-self-end flex items-center gap-2 relative z-50">
-            {belongsToUser ? (
+          <div className="mr-3 [grid-area:flags] justify-self-start lg:justify-self-end flex items-center gap-2 relative z-50">            {belongsToUser ? (
                 <div className="min-w-[200px]">
                   <CountriesInput
                       value={postState.countries.map(country => country.id)}
