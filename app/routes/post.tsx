@@ -173,6 +173,7 @@ export default function PostPage({
                     containerClass="mb-6"
                     onDelete={belongsToUser ? handleDelete : undefined}
                     postBelongsToCurrentUser={belongsToUser}
+                    onEditStateChange={handleEditStateChange}
                 />
             ))}
           </div>

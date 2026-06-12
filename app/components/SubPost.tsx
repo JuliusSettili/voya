@@ -1,51 +1,29 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { MdDeleteOutline, MdAdd } from "react-icons/md";
-import {useEffect, useState} from "react";
+import { useState } from "react";
 import type { SubPost as SubPostType, SubPostImage } from "../../api/supabaseClient";
 import EditField from "./EditField";
 import { addSubPostImage, deleteSubPostImage, getSubPostById, updateSubPost } from "../../api/subposts";
 import { uploadPostImage } from "../../api/posts";
 import DeleteImageModal from "../modals/DeleteImageModal";
 import DeleteSubPostModal from "../modals/DeleteSubpostModal";
-import {useBlocker} from "react-router";
-import UnsavedChangesModal from "~/modals/UnsavedChangesModal";
 
 export function SubPost({
-  subPost,
-  containerClass,
-  onDelete,
-  postBelongsToCurrentUser,
-}: {
+                          subPost,
+                          containerClass,
+                          onDelete,
+                          postBelongsToCurrentUser,
+                          onEditStateChange,
+                        }: {
   subPost: SubPostType;
   containerClass: string;
   onDelete?: (id: number) => void;
   postBelongsToCurrentUser: boolean;
+  onEditStateChange?: (isEditing: boolean) => void;
 }) {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [subPostState, setSubPostState] = useState(subPost);
-  const [editingCount, setEditingCount] = useState(0);
-  const isEditing = editingCount > 0;
-
-  const blocker = useBlocker(
-      ({ currentLocation, nextLocation }) =>
-          isEditing && currentLocation.pathname !== nextLocation.pathname
-  );
-
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isEditing) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [isEditing]);
-
-  const handleEditStateChange = (editing: boolean) => {
-    setEditingCount((prev) => (editing ? prev + 1 : Math.max(0, prev - 1)));
-  };
 
   const handleEditTitle = (newTitle: string) => {
     updateSubPost(subPost.id, { title: newTitle });
@@ -107,119 +85,112 @@ export function SubPost({
   }
 
   return (
-      <>
-        <UnsavedChangesModal
-            isOpen={blocker.state === "blocked"}
-            onProceed={() => blocker.proceed?.()}
-            onCancel={() => blocker.reset?.()}
-        />
-        <details className={`collapse collapse-arrow bg-base-100 border border-base-300 ${containerClass}`} name="my-accordion-det-1">
-          <summary className="collapse-title flex items-center justify-between gap-2 font-semibold">
-            <div className="min-w-0 flex-1 truncate">
-              {postBelongsToCurrentUser && (
-                <EditField
-                  placeholderValue="Titel Subpost"
-                  value={subPostState.title}
-                  onChange={handleEditTitle}
-                  onEditStateChange={handleEditStateChange}
-                />
-              )}
-              {!postBelongsToCurrentUser && (
-                <span className="min-w-0 flex-1 truncate" title={subPostState.title}>
-                  {subPostState.title}
-                </span>
-              )}
-            </div>
-            {onDelete ? (
-                <>
-                  <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        openDeleteSubpostModal();
-                      }}
-                      aria-label="Löschen"
-                      className="btn btn-square btn-error btn-sm ml-2"
-                      title="Löschen"
-                  >
-                    <MdDeleteOutline size={16} />
-                  </button>
-                  <DeleteSubPostModal
-                      subPostId={subPost.id}
-                      onConfirm={() => onDelete(subPost.id)}
-                  />
-                </>
-            ) : null}
-          </summary>
-          <div className="collapse-content text-sm">
+      <details className={`collapse collapse-arrow bg-base-100 border border-base-300 ${containerClass}`} name="my-accordion-det-1">
+        <summary className="collapse-title flex items-center justify-between gap-2 font-semibold">
+          <div className="min-w-0 flex-1 truncate">
             {postBelongsToCurrentUser && (
-              <EditField
-                placeholderValue="Beschreibung Subpost"
-                value={subPostState.content}
-                onChange={handleEditContent}
-                onEditStateChange={handleEditStateChange}
-                className="mb-4"
-              />
+                <EditField
+                    placeholderValue="Titel Subpost"
+                    value={subPostState.title}
+                    onChange={handleEditTitle}
+                    onEditStateChange={onEditStateChange}
+                />
             )}
             {!postBelongsToCurrentUser && (
-              <p className="mb-4">{subPostState.content}</p>
+                <span className="min-w-0 flex-1 truncate" title={subPostState.title}>
+                {subPostState.title}
+              </span>
             )}
-            <Swiper
+          </div>
+          {onDelete ? (
+              <>
+                <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      openDeleteSubpostModal();
+                    }}
+                    aria-label="Löschen"
+                    className="btn btn-square btn-error btn-sm ml-2"
+                    title="Löschen"
+                >
+                  <MdDeleteOutline size={16} />
+                </button>
+                <DeleteSubPostModal
+                    subPostId={subPost.id}
+                    onConfirm={() => onDelete(subPost.id)}
+                />
+              </>
+          ) : null}
+        </summary>
+        <div className="collapse-content text-sm">
+          {postBelongsToCurrentUser && (
+              <EditField
+                  placeholderValue="Beschreibung Subpost"
+                  value={subPostState.content}
+                  onChange={handleEditContent}
+                  onEditStateChange={onEditStateChange}
+                  className="mb-4"
+              />
+          )}
+          {!postBelongsToCurrentUser && (
+              <p className="mb-4">{subPostState.content}</p>
+          )}
+          <Swiper
               spaceBetween={10}
               slidesPerView={"auto"}
               navigation={true}
               modules={[Navigation]}
-            >
-              {subPostState.sub_post_images.map((image: SubPostImage) => (
-                  <SwiperSlide key={image.id} style={{ width: "auto" }}>
-                    <img className="h-50 relative" src={image.image_url} alt={`Sub post image ${image.id}`} />
-                    {postBelongsToCurrentUser && (
-                        <>
-                          <button
-                              className="btn btn-sm btn-error btn-square absolute top-2 right-2"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                openDeleteImageModal(image.id);
-                              }}
-                          >
-                            <MdDeleteOutline size={16} />
-                          </button>
-                          <DeleteImageModal
-                              imageId={image.id}
-                              onConfirm={() => handleDeleteSubPostImage(image.id)}
-                          />
-                        </>
-                    )}
-                  </SwiperSlide>
-              ))}
-              {postBelongsToCurrentUser && (
+          >
+            {subPostState.sub_post_images.map((image: SubPostImage) => (
+                <SwiperSlide key={image.id} style={{ width: "auto" }}>
+                  <img className="h-50 relative" src={image.image_url} alt={`Sub post image ${image.id}`} />
+                  {postBelongsToCurrentUser && (
+                      <>
+                        <button
+                            className="btn btn-sm btn-error btn-square absolute top-2 right-2"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              openDeleteImageModal(image.id);
+                            }}
+                        >
+                          <MdDeleteOutline size={16} />
+                        </button>
+                        <DeleteImageModal
+                            imageId={image.id}
+                            onConfirm={() => handleDeleteSubPostImage(image.id)}
+                        />
+                      </>
+                  )}
+                </SwiperSlide>
+            ))}
+            {postBelongsToCurrentUser && (
                 <SwiperSlide>
                   <div className="flex h-50 w-50 items-center justify-center">
                     <label
-                      htmlFor={`subpost-${subPostState.id}-image-upload`}
-                      className="btn btn-outline btn-secondary btn-sm"
+                        htmlFor={`subpost-${subPostState.id}-image-upload`}
+                        className="btn btn-outline btn-secondary btn-sm"
                     >
                       {isUploadingImage ? (
-                        <span className="loading loading-spinner"></span>
+                          <span className="loading loading-spinner"></span>
                       ) : (
-                        <MdAdd size={16} />
+                          <MdAdd size={16} />
                       )}
                     </label>
                     <input
-                      type="file"
-                      className="hidden"
-                      id={`subpost-${subPostState.id}-image-upload`}
-                      accept="image/*"
-                      onChange={handleEditImage}
+                        type="file"
+                        className="hidden"
+                        id={`subpost-${subPostState.id}-image-upload`}
+                        accept="image/*"
+                        onChange={handleEditImage}
                     />
                   </div>
                 </SwiperSlide>
-              )}
-            </Swiper>
-          </div>
-        </details>
-      </>
+            )}
+          </Swiper>
+        </div>
+      </details>
   );
 }

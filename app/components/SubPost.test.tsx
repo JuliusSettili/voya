@@ -58,18 +58,6 @@ vi.mock("../modals/DeleteImageModal", () => ({
     )
 }));
 
-vi.mock("~/modals/UnsavedChangesModal", () => ({
-    default: ({ isOpen }: any) => isOpen ? <div data-testid="unsaved-modal" /> : null
-}));
-
-vi.mock("react-router", async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual as any,
-        useBlocker: vi.fn(() => ({ state: "unblocked", proceed: vi.fn(), reset: vi.fn() })),
-    };
-});
-
 const MOCK_SUBPOST_ID = 1;
 const MOCK_TITLE = "Test Subpost Titel";
 const MOCK_CONTENT = "Test Subpost Inhalt";
@@ -234,5 +222,24 @@ describe("SubPost Component", () => {
         expect(deleteSubPostImage).toHaveBeenCalledWith(MOCK_IMAGE_ID);
         expect(deleteSubPostImage).toHaveBeenCalledTimes(1);
         expect(getSubPostById).toHaveBeenCalledWith(MOCK_SUBPOST_ID);
+    });
+
+    it("calls onEditStateChange when triggered by an EditField", async () => {
+        const user = userEvent.setup();
+        const mockOnEditStateChange = vi.fn();
+
+        render(
+            <SubPost
+                subPost={MOCK_SUBPOST_FULL}
+                containerClass={CONTAINER_CLASS}
+                postBelongsToCurrentUser={true}
+                onEditStateChange={mockOnEditStateChange}
+            />
+        );
+
+        const editButton = screen.getByTestId(`trigger-edit-${PLACEHOLDER_TITLE}`);
+        await user.click(editButton);
+
+        expect(mockOnEditStateChange).toHaveBeenCalledWith(true);
     });
 });

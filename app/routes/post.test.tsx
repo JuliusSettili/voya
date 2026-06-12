@@ -22,9 +22,15 @@ vi.mock("../../api/subposts", () => ({
 }));
 
 vi.mock("~/components/SubPost", () => ({
-    SubPost: ({ subPost, onDelete }: any) => (
+    SubPost: ({ subPost, onDelete, onEditStateChange }: any) => (
         <div data-testid={`subpost-${subPost.id}`}>
             {onDelete && <button onClick={() => onDelete(subPost.id)}>Delete</button>}
+            <button
+                data-testid={`trigger-subpost-edit-${subPost.id}`}
+                onClick={() => onEditStateChange?.(true)}
+            >
+                Edit Subpost
+            </button>
         </div>
     ),
 }));
