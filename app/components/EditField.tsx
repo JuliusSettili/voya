@@ -1,5 +1,5 @@
 // this component is a text field with a edit button. 
-// if the button is cliecked, the text field becomes editable. 
+// if the button is clicked, the text field becomes editable.
 // if the button is clicked again, the text field becomes read only again and the onChange function is called with the new value.
 
 import { useState } from "react";
@@ -10,11 +10,13 @@ export default function EditField({
                                     placeholderValue,
                                     onChange,
                                     className,
-}: {
+                                    onEditStateChange,
+                                  }: {
   value: string;
   placeholderValue: string;
   onChange: (newValue: string) => void;
   className?: string;
+  onEditStateChange?: (isEditing: boolean) => void;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value);
@@ -29,6 +31,9 @@ export default function EditField({
       }
       setError(null);
       onChange(inputValue);
+      onEditStateChange?.(false);
+    } else {
+        onEditStateChange?.(true);
     }
     setIsEditing(!isEditing);
   };

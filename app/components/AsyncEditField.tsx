@@ -9,10 +9,12 @@ export default function AsyncEditField({
   value,
   onChange,
   className,
+  onEditStateChange,
 }: {
   value: string;
   onChange: (newValue: string) => Promise<void>;
   className?: string;
+  onEditStateChange?: (isEditing: boolean) => void;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(value);
@@ -24,6 +26,7 @@ export default function AsyncEditField({
     if (!isEditing) {
       setError("");
       setIsEditing(true);
+      onEditStateChange?.(true);
       return;
     }
     try {
@@ -31,6 +34,7 @@ export default function AsyncEditField({
       setError("");
       await onChange(inputValue);
       setIsEditing(false);
+      onEditStateChange?.(false);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Speichern der Änderungen ist fehlgeschlagen.");
     } finally {
@@ -47,8 +51,8 @@ export default function AsyncEditField({
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          readOnly={!isEditing}
-          className="input"
+          readOnly={isSaving}
+          className={`input ${error ? "input-error" : ""}`}
       />)}
 
       <button
@@ -56,6 +60,7 @@ export default function AsyncEditField({
         onClick={handleEditClick}
         className="btn btn-square btn-ghost btn-sm"
         title={isEditing ? "Änderungen speichern" : "Bearbeiten"}
+        disabled={isSaving}
       >
         {isEditing ? <MdCheck size={16} /> : <MdEdit size={16} />}
       </button>

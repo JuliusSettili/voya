@@ -8,6 +8,8 @@ import { postBelongsToCurrentUser } from "../../api/posts";
 import EditField from "~/components/EditField";
 import { updatePostData } from "../../api/posts";
 import CountriesInput from "~/components/CountriesInput";
+import {useBlocker} from "react-router";
+import UnsavedChangesModal from "~/modals/UnsavedChangesModal";
 
 export async function clientLoader({
   params,
@@ -20,6 +22,24 @@ export default function PostPage({
 }: Route.ComponentProps) {
   const [postState, setPostState] = useState(post);
   const [belongsToUser, setBelongsToUser] = useState(false);
+  const [editingCount, setEditingCount] = useState(0);
+  const isEditing = editingCount > 0;
+
+  const blocker = useBlocker(
+      ({ currentLocation, nextLocation }) =>
+          isEditing && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isEditing) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isEditing]);
 
   useEffect(() => {
     setPostState(post);
@@ -91,56 +111,78 @@ export default function PostPage({
     }
   };
 
+  const handleEditStateChange = (editing: boolean) => {
+    setEditingCount((prev) => (editing ? prev + 1 : Math.max(0, prev - 1)));
+  };
+
   return (
-    <main className="p-6 grid grid-cols-4 gap-6 [grid-template-areas:'image_title_title_flags''description_description_description_description''content_content_content_content'] lg:[grid-template-areas:'title_flags_flags_image''description_description_description_image''content_content_content_image']">
-      <img className="[grid-area:image]" src={postState.title_image_url} alt={postState.title} />
-      <div className="[grid-area:title]">
-        {belongsToUser ? (
-            <div className="mb-1 text-2xl font-semibold">
-              <EditField placeholderValue="Titel Post" value={postState.title} onChange={handleEditTitle} />
-            </div>
-        ) : (
-            <h1 className="mb-1 text-2xl font-semibold">{postState.title}</h1>
-        )}
-        <div className="text-sm text-gray-600">@{postState.profiles.display_name}</div>
-      </div>
-      <div className="mr-3 [grid-area:flags] justify-self-end flex items-center gap-2 relative z-50">
-        {belongsToUser ? (
-            <div className="min-w-[200px]">
-              <CountriesInput
-                  value={postState.countries.map(country => country.id)}
-                  onChange={handleEditCountries}
-              />
-            </div>
-        ) : (
-            postState.countries.map((country) => (
-                <ReactCountryFlag key={country.id} countryCode={country.code} svg />
-            ))
-        )}
-      </div>
-      <div className="[grid-area:description]">
-        {belongsToUser ? (
-            <EditField placeholderValue="Beschreibung Post" value={postState.description} onChange={handleEditDescription} />
-        ) : (
-            <p>{postState.description}</p>
-        )}
-      </div>
-      <div className="[grid-area:content]">
-        {postState.sub_posts?.map((subPost) => (
-          <SubPost
-            key={subPost.id}
-            subPost={subPost}
-            containerClass="mb-6"
-            onDelete={belongsToUser ? handleDelete : undefined}
-            postBelongsToCurrentUser={belongsToUser}
-          />
-        ))}
-      </div>
-      {belongsToUser && (
-          <button className="btn btn-primary" type="button" onClick={createEmptySubPost}>
-            Subpost hinzufügen
-          </button>
-      )}
-    </main>
+      <>
+        <UnsavedChangesModal
+            isOpen={blocker.state === "blocked"}
+            onProceed={() => blocker.proceed?.()}
+            onCancel={() => blocker.reset?.()}
+        />
+        <main className="p-6 grid grid-cols-4 gap-6 [grid-template-areas:'image_title_title_flags''description_description_description_description''content_content_content_content'] lg:[grid-template-areas:'title_flags_flags_image''description_description_description_image''content_content_content_image']">
+          <img className="[grid-area:image]" src={postState.title_image_url} alt={postState.title} />
+          <div className="[grid-area:title]">
+            {belongsToUser ? (
+                <div className="mb-1 text-2xl font-semibold">
+                  <EditField
+                      placeholderValue="Titel Post"
+                      value={postState.title}
+                      onChange={handleEditTitle}
+                      onEditStateChange={handleEditStateChange}
+                  />
+                </div>
+            ) : (
+                <h1 className="mb-1 text-2xl font-semibold">{postState.title}</h1>
+            )}
+            <div className="text-sm text-gray-600">@{postState.profiles.display_name}</div>
+          </div>
+          <div className="mr-3 [grid-area:flags] justify-self-end flex items-center gap-2 relative z-50">
+            {belongsToUser ? (
+                <div className="min-w-[200px]">
+                  <CountriesInput
+                      value={postState.countries.map(country => country.id)}
+                      onChange={handleEditCountries}
+                  />
+                </div>
+            ) : (
+                postState.countries.map((country) => (
+                    <ReactCountryFlag key={country.id} countryCode={country.code} svg />
+                ))
+            )}
+          </div>
+          <div className="[grid-area:description]">
+            {belongsToUser ? (
+                <EditField
+                    placeholderValue="Beschreibung Post"
+                    value={postState.description}
+                    onChange={handleEditDescription}
+                    onEditStateChange={handleEditStateChange}
+                />
+            ) : (
+                <p>{postState.description}</p>
+            )}
+          </div>
+          <div className="[grid-area:content]">
+            {postState.sub_posts?.map((subPost) => (
+                <SubPost
+                    key={subPost.id}
+                    subPost={subPost}
+                    containerClass="mb-6"
+                    onDelete={belongsToUser ? handleDelete : undefined}
+                    postBelongsToCurrentUser={belongsToUser}
+                />
+            ))}
+          </div>
+          {belongsToUser && (
+              <button className="btn btn-primary" type="button" onClick={createEmptySubPost}>
+                Subpost hinzufügen
+              </button>
+          )}
+        </main>
+      </>
+
   );
 }

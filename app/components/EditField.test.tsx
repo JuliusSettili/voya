@@ -50,14 +50,17 @@ describe("EditField Component", () => {
         expect(screen.getByText(PLACEHOLDER_TEXT)).toBeInTheDocument();
     });
 
-    it("switches to edit mode and displays input field when edit button is clicked", async () => {
+    it("switches to edit mode, displays input field and calls onEditStateChange when edit button is clicked", async () => {
         const user = userEvent.setup();
         const mockOnChange = vi.fn();
+        const mockOnEditStateChange = vi.fn(); // NEU
+
         render(
             <EditField
                 value={INITIAL_TEXT_VALUE}
                 placeholderValue={PLACEHOLDER_TEXT}
                 onChange={mockOnChange}
+                onEditStateChange={mockOnEditStateChange} // NEU
             />
         );
 
@@ -68,16 +71,21 @@ describe("EditField Component", () => {
         expect(inputField).toBeInTheDocument();
         expect(inputField).toHaveValue(INITIAL_TEXT_VALUE);
         expect(screen.getByTitle(BUTTON_TITLE_SAVE)).toBeInTheDocument();
+
+        expect(mockOnEditStateChange).toHaveBeenCalledWith(true);
     });
 
-    it("saves the new value, calls onChange, and closes edit mode on success", async () => {
+    it("saves the new value, calls onChange, closes edit mode and calls onEditStateChange on success", async () => {
         const user = userEvent.setup();
         const mockOnChange = vi.fn();
+        const mockOnEditStateChange = vi.fn(); // NEU
+
         render(
             <EditField
                 value={INITIAL_TEXT_VALUE}
                 placeholderValue={PLACEHOLDER_TEXT}
                 onChange={mockOnChange}
+                onEditStateChange={mockOnEditStateChange} // NEU
             />
         );
 
@@ -92,20 +100,27 @@ describe("EditField Component", () => {
         expect(mockOnChange).toHaveBeenCalledWith(UPDATED_TEXT_VALUE);
         expect(mockOnChange).toHaveBeenCalledTimes(EXPECTED_CALL_COUNT_ON_SUCCESS);
         expect(screen.queryByRole(INPUT_ROLE_TEXTBOX)).not.toBeInTheDocument();
+
+        expect(mockOnEditStateChange).toHaveBeenCalledWith(false);
     });
 
-    it("displays an error message and prevents saving when input is empty", async () => {
+    it("displays an error message, prevents saving and stays in edit mode when input is empty", async () => {
         const user = userEvent.setup();
         const mockOnChange = vi.fn();
+        const mockOnEditStateChange = vi.fn(); // NEU
+
         render(
             <EditField
                 value={INITIAL_TEXT_VALUE}
                 placeholderValue={PLACEHOLDER_TEXT}
                 onChange={mockOnChange}
+                onEditStateChange={mockOnEditStateChange} // NEU
             />
         );
 
         await user.click(screen.getByTitle(BUTTON_TITLE_EDIT));
+
+        mockOnEditStateChange.mockClear();
 
         const inputField = screen.getByRole(INPUT_ROLE_TEXTBOX);
         await user.clear(inputField);
@@ -115,6 +130,8 @@ describe("EditField Component", () => {
         expect(screen.getByText(ERROR_MESSAGE_EMPTY)).toBeInTheDocument();
         expect(mockOnChange).toHaveBeenCalledTimes(EXPECTED_CALL_COUNT_ON_ERROR);
         expect(screen.getByRole(INPUT_ROLE_TEXTBOX)).toBeInTheDocument();
+
+        expect(mockOnEditStateChange).not.toHaveBeenCalledWith(false);
     });
 
     it("clears the error message as soon as the user starts typing again", async () => {

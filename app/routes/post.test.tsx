@@ -1,9 +1,10 @@
-import {render, screen} from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import PostPage from "./post";
 import * as postsApi from "../../api/posts";
 import * as subPostsApi from "../../api/subposts";
+import { MemoryRouter } from "react-router";
 
 vi.mock("../../api/posts", async () => {
     const actual = await vi.importActual("../../api/posts");
@@ -29,14 +30,29 @@ vi.mock("~/components/SubPost", () => ({
 }));
 
 vi.mock("~/components/EditField", () => ({
-    default: ({ value, onChange }: any) => (
-        <input data-testid="edit-field" value={value} onChange={(e) => onChange(e.target.value)} />
+    default: ({ value, onChange, onEditStateChange }: any) => (
+        <div>
+            <input data-testid="edit-field" value={value} onChange={(e) => onChange(e.target.value)} />
+            <button data-testid="trigger-edit" onClick={() => onEditStateChange?.(true)}>Edit</button>
+        </div>
     ),
 }));
 
 vi.mock("~/components/CountriesInput", () => ({
     default: () => <div data-testid="countries-input" />,
 }));
+
+vi.mock("~/modals/UnsavedChangesModal", () => ({
+    default: ({ isOpen }: any) => isOpen ? <div data-testid="unsaved-modal" /> : null
+}));
+
+vi.mock("react-router", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual as any,
+        useBlocker: vi.fn(() => ({ state: "unblocked", proceed: vi.fn(), reset: vi.fn() })),
+    };
+});
 
 const mockPost = {
     id: 1,
@@ -62,9 +78,16 @@ describe("PostPage", () => {
             matches: []
         } as any;
 
-        render(<PostPage {...mockProps} />);
+        render(
+            <MemoryRouter>
+                <PostPage {...mockProps} />
+            </MemoryRouter>
+        );
 
-        expect(screen.getByText("Test Post")).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText("Test Post")).toBeInTheDocument();
+        });
+
         expect(screen.queryByTestId("edit-field")).not.toBeInTheDocument();
         expect(screen.queryByText("Subpost hinzufügen")).not.toBeInTheDocument();
     });
@@ -77,7 +100,11 @@ describe("PostPage", () => {
             matches: []
         } as any;
 
-        render(<PostPage {...mockProps} />);
+        render(
+            <MemoryRouter>
+                <PostPage {...mockProps} />
+            </MemoryRouter>
+        );
 
         const editFields = await screen.findAllByTestId("edit-field");
         expect(editFields.length).toBeGreaterThan(0);
@@ -101,7 +128,11 @@ describe("PostPage", () => {
             matches: []
         } as any;
 
-        render(<PostPage {...mockProps} />);
+        render(
+            <MemoryRouter>
+                <PostPage {...mockProps} />
+            </MemoryRouter>
+        );
 
         const addButton = await screen.findByRole("button", { name: /subpost hinzufügen/i });
         await user.click(addButton);
@@ -119,7 +150,11 @@ describe("PostPage", () => {
             matches: []
         } as any;
 
-        render(<PostPage {...mockProps} />);
+        render(
+            <MemoryRouter>
+                <PostPage {...mockProps} />
+            </MemoryRouter>
+        );
 
         const deleteButton = await screen.findByText("Delete");
         await user.click(deleteButton);

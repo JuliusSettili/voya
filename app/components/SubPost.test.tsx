@@ -27,12 +27,20 @@ vi.mock("../../api/posts", () => ({
 }));
 
 vi.mock("./EditField", () => ({
-    default: ({ value, onChange, placeholderValue }: any) => (
-        <input
-            data-testid={`mock-edit-${placeholderValue}`}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-        />
+    default: ({ value, onChange, placeholderValue, onEditStateChange }: any) => (
+        <div>
+            <input
+                data-testid={`mock-edit-${placeholderValue}`}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+            />
+            <button
+                data-testid={`trigger-edit-${placeholderValue}`}
+                onClick={() => onEditStateChange?.(true)}
+            >
+                Edit
+            </button>
+        </div>
     )
 }));
 
@@ -49,6 +57,18 @@ vi.mock("../modals/DeleteImageModal", () => ({
         </dialog>
     )
 }));
+
+vi.mock("~/modals/UnsavedChangesModal", () => ({
+    default: ({ isOpen }: any) => isOpen ? <div data-testid="unsaved-modal" /> : null
+}));
+
+vi.mock("react-router", async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual as any,
+        useBlocker: vi.fn(() => ({ state: "unblocked", proceed: vi.fn(), reset: vi.fn() })),
+    };
+});
 
 const MOCK_SUBPOST_ID = 1;
 const MOCK_TITLE = "Test Subpost Titel";

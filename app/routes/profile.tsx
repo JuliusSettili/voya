@@ -5,8 +5,10 @@ import type { Route } from "./+types/profile";
 import PostList from "~/components/PostList";
 import AsyncEditField from "~/components/AsyncEditField";
 import { ReactCountryFlag } from "react-country-flag";
-import { Link } from "react-router";
+import {Link, useBlocker} from "react-router";
 import { MdAdd } from "react-icons/md";
+import {useEffect, useState} from "react";
+import UnsavedChangesModal from "~/modals/UnsavedChangesModal";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const [profile, posts, countries] = await Promise.all([
@@ -43,26 +45,60 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 
 export default function ProfilePage({ loaderData }: Route.ComponentProps) {
   const { profile, posts, countries } = loaderData;
+  const [isEditing, setIsEditing] = useState(false);
+
+  const blocker = useBlocker(
+      ({ currentLocation, nextLocation }) =>
+          isEditing && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isEditing) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isEditing]);
 
   return (
-    <main className="p-8">
-      <div className="mb-8 flex justify-between">
-        <div>
-          <h1 className="text-4xl font-bold mb-2">
-            <AsyncEditField value={profile.display_name} onChange={async (value) => {await updateProfileDisplayName(profile.id, value)}} />
-          </h1>
-          <div className="mb-2 badge badge-secondary">{profile.email}</div>
-          <div className="mb-2">{countries.map((country) => (
-              <ReactCountryFlag className="me-2" key={country.code} countryCode={country.code} svg />
-            ))}
+      <>
+        <UnsavedChangesModal
+            isOpen={blocker.state === "blocked"}
+            onProceed={() => blocker.proceed?.()}
+            onCancel={() => blocker.reset?.()}
+        />
+        <main className="p-8">
+          <div className="mb-8 flex justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">
+                <AsyncEditField
+                    value={profile.display_name}
+                    onChange={async (value) => {
+                      try {
+                        await updateProfileDisplayName(profile.id, value);
+                      } catch (error) {
+                        throw new Error("Dieser Name ist bereits vergeben!");
+                      }
+                    }}
+                    onEditStateChange={setIsEditing}
+                />
+              </h1>
+              <div className="mb-2 badge badge-secondary">{profile.email}</div>
+              <div className="mb-2">{countries.map((country) => (
+                  <ReactCountryFlag className="me-2" key={country.code} countryCode={country.code} svg />
+              ))}
+              </div>
+            </div>
+            <Link className="btn btn-primary" to="/new-post">
+              <MdAdd size={16} />
+              Post erstellen
+            </Link>
           </div>
-        </div>
-        <Link className="btn btn-primary" to="/new-post">
-          <MdAdd size={16} />
-          Post erstellen
-        </Link>
-      </div>
-      <PostList posts={posts} />
-    </main>
+          <PostList posts={posts} />
+        </main>
+      </>
   );
 }
