@@ -1,6 +1,8 @@
-import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach, beforeAll } from "vitest";
 import AdminPage from "./admin-page";
+import * as profileApi from "../../api/profile";
 
 vi.mock("../../api/profile", () => ({
     fetchProfiles: vi.fn(),
@@ -13,50 +15,113 @@ vi.mock("../../api/roles", () => ({
     fetchRoles: vi.fn(),
 }));
 
+vi.mock("../../api/supabaseClient", () => ({
+    getSupabaseClient: vi.fn(() => ({
+        auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: "admin1" } } }) }
+    }))
+}));
+
+vi.mock("~/modals/BlockUserModal", () => ({
+    default: ({ profile, onConfirm }: any) => (
+        <div data-testid={`mock-modal-${profile.id}`}>
+            <button
+                data-testid={`trigger-confirm-${profile.id}`}
+                onClick={() => onConfirm(profile.id, !profile.blocked, "Test Grund")}
+            >
+                Confirm
+            </button>
+        </div>
+    )
+}));
+
+const mockProfiles = [
+    { id: "admin1", display_name: "Admin", email: "admin@test.com", blocked: false, roles: { id: 1 }, blocked_users: [] },
+    { id: "user2", display_name: "User Two", email: "two@test.com", blocked: true, roles: { id: 2 }, blocked_users: [{ block_text: "Spam" }] }
+] as any;
+
+const mockRoles = [
+    { id: 1, name: "Admin" },
+    { id: 2, name: "User" }
+];
+
 describe("AdminPage", () => {
-    it("deaktiviert das Rollen-Dropdown und den Sperr-Button für den aktuell eingeloggten Benutzer", () => {
-        const mockProfiles = [
-            {
-                id: "admin-123",
-                display_name: "IchSelbst",
-                email: "ich@test.de",
-                roles: { id: 1 },
-                blocked: false,
-                blocked_users: []
-            },
-            {
-                id: "user-456",
-                display_name: "AndererUser",
-                email: "anderer@test.de",
-                roles: { id: 2 },
-                blocked: true,
-                blocked_users: [{ block_text: "Fiese Aussage" }]
-            }
-        ];
+    beforeAll(() => {
+        HTMLDialogElement.prototype.showModal = vi.fn();
+    });
 
-        const mockRoles = [
-            { id: 1, name: "Admin" },
-            { id: 2, name: "User" }
-        ];
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
 
-        render(
-            <AdminPage
-                {...({
-                    loaderData: {
-                        profiles: mockProfiles,
-                        roles: mockRoles,
-                        currentUserId: "admin-123"
-                    }
-                } as any)}
-            />
-        );
+    it("renders profiles and roles", () => {
+        const mockProps = {
+            loaderData: { profiles: mockProfiles, roles: mockRoles, currentUserId: "admin1" },
+            params: {},
+            matches: []
+        } as any;
+
+        render(<AdminPage {...mockProps} />);
+
+        expect(screen.getByText("Admin", { selector: "td.font-medium" })).toBeInTheDocument();
+        expect(screen.getByText("User Two", { selector: "td.font-medium" })).toBeInTheDocument();
+    });
+
+    it("filters profiles by search query", async () => {
+        const user = userEvent.setup();
+        const mockProps = {
+            loaderData: { profiles: mockProfiles, roles: mockRoles, currentUserId: "admin1" },
+            params: {},
+            matches: []
+        } as any;
+
+        render(<AdminPage {...mockProps} />);
+
+        const searchInput = screen.getByPlaceholderText("Suche nach Namen...");
+        await user.type(searchInput, "Two");
+
+        expect(screen.queryByText("Admin", { selector: "td.font-medium" })).not.toBeInTheDocument();
+        expect(screen.getByText("User Two", { selector: "td.font-medium" })).toBeInTheDocument();
+    });
+
+    it("updates a user role", async () => {
+        const user = userEvent.setup();
+        vi.mocked(profileApi.fetchProfiles).mockResolvedValue(mockProfiles);
+
+        const mockProps = {
+            loaderData: { profiles: mockProfiles, roles: mockRoles, currentUserId: "admin1" },
+            params: {},
+            matches: []
+        } as any;
+
+        render(<AdminPage {...mockProps} />);
 
         const selects = screen.getAllByRole("combobox");
-        expect(selects[0]).toBeDisabled();
-        expect(selects[1]).not.toBeDisabled();
+        await user.selectOptions(selects[1], "1");
 
-        const buttons = screen.getAllByRole("button", { name: /Aktiv|Gesperrt/i });
-        expect(buttons[0]).toBeDisabled();
-        expect(buttons[1]).not.toBeDisabled();
+        expect(profileApi.updateProfileRole).toHaveBeenCalledWith("user2", 1);
+        await waitFor(() => {
+            expect(profileApi.fetchProfiles).toHaveBeenCalled();
+        });
+    });
+
+    it("toggles block status via modal", async () => {
+        const user = userEvent.setup();
+        vi.mocked(profileApi.fetchProfiles).mockResolvedValue(mockProfiles);
+
+        const mockProps = {
+            loaderData: { profiles: mockProfiles, roles: mockRoles, currentUserId: "admin1" },
+            params: {},
+            matches: []
+        } as any;
+
+        render(<AdminPage {...mockProps} />);
+
+        const confirmBtn = screen.getByTestId("trigger-confirm-user2");
+        await user.click(confirmBtn);
+
+        expect(profileApi.unblockProfile).toHaveBeenCalledWith("user2");
+        await waitFor(() => {
+            expect(profileApi.fetchProfiles).toHaveBeenCalled();
+        });
     });
 });
