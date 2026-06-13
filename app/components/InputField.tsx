@@ -1,3 +1,8 @@
+/*
+Diese Komponente ist ein Eingabefeld mit Label, optionalem Icon und Fehleranzeige.
+Das Textfeld kann über eine übergebene Ref direkt angesprochen werden.
+Wenn ein Fehler übergeben wird, wird das Feld als ungültig markiert und die Fehlermeldung mit dem Input verknüpft angezeigt.
+*/
 import { forwardRef, useId } from 'react';
 import type { InputHTMLAttributes, ReactNode } from 'react';
 

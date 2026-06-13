@@ -1,3 +1,11 @@
+/*
+Diese Komponente stellt eine Ansicht für einen Beitrag dar.
+Sie zeigt Titel, Beschreibung, Bild, Erstellerprofil und zugehörige Länder des Beitrags an.
+Je nach Zustand und Benutzerrechten werden zusätzliche Aktionen angezeigt:
+- Auf der Profilseite kann die Privatsphäre des Beitrags geändert und der Beitrag gelöscht werden.
+- Administratoren können Beiträge sperren oder wieder freigeben.
+- Gesperrte Beiträge werden visuell hervorgehoben und zeigen den Sperrgrund an.
+*/
 import ReactCountryFlag from "react-country-flag";
 import { Link, useLocation } from "react-router";
 import type { Country, Profile } from "../../api/supabaseClient";

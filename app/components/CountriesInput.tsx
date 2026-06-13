@@ -1,3 +1,8 @@
+/* 
+Diese Komponente ist ein Textfeld mit Empfehlungs-Tags und Auswahl-Tags.
+Wenn mehr als 3 Zeichen in das Textfeld eingegeben werden, werden Empfehlungs-Tags die der Eingabe entsprechen angezeigt.
+Wenn einer der Empfehlungs-Tags geclickt wird erschein er als Auswahl-Tag im Textfeld.
+*/
 import { useEffect, useMemo, useState } from "react";
 import ReactCountryFlag from "react-country-flag";
 import { fetchCountries } from "../../api/countries";

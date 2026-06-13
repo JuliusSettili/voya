@@ -1,3 +1,9 @@
+/*
+Diese Komponente stellt einen ausklappbaren SubPost dar.
+Wenn der Beitrag dem aktuellen Benutzer gehört, können Titel und Beschreibung direkt bearbeitet, 
+Bilder hinzugefügt oder gelöscht und der gesamte SubPost entfernt werden.
+Die Bilder werden in einem Swiper-Karussell dargestellt.
+*/
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { MdDeleteOutline, MdAdd } from "react-icons/md";
@@ -10,12 +16,12 @@ import DeleteImageModal from "../modals/DeleteImageModal";
 import DeleteSubPostModal from "../modals/DeleteSubpostModal";
 
 export function SubPost({
-                          subPost,
-                          containerClass,
-                          onDelete,
-                          postBelongsToCurrentUser,
-                          onEditStateChange,
-                        }: {
+  subPost,
+  containerClass,
+  onDelete,
+  postBelongsToCurrentUser,
+  onEditStateChange,
+}: {
   subPost: SubPostType;
   containerClass: string;
   onDelete?: (id: number) => void;

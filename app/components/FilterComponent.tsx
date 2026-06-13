@@ -1,3 +1,7 @@
+/* 
+Diese Komponente nutzt die CountriesInput und stellt die ausgewählten Länder als Parameter zur Verfügung.
+*/
+
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router';
 import CountriesInput from "~/components/CountriesInput";

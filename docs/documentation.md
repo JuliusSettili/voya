@@ -75,6 +75,16 @@ Beispiele:
 - [`SubPost`](../app/components/SubPost.tsx)
 - [`CountriesInput`](../app/components/CountriesInput.tsx)
 
+#### app/modals
+
+Ebthält aufpoppende Web-Elemente für verschiedene Funktionen.
+
+Beispiele:
+- [UnsavedChangesModal.tsx](../app/modals/UnsavedChangesModal.tsx)
+- [BlockUserModal.tsx](../app/modals/BlockUserModal.tsx)
+- [DeleteImageModal.tsx](../app/modals/DeleteImageModal.tsx)
+- [TogglePrivaceModal.tsx](../app/modals/TogglePrivacyModal.tsx)
+
 ---
 
 ## 3. Routing und Client-Aktionen

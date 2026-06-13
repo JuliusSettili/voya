@@ -28,6 +28,7 @@ Neue Frontend-Funktionalitäten werden im Verzeichnis [app/](../app) implementie
 - Layouts: Enthält die verschiedenen Layouts. Siehe: [app/layouts/](../app/layouts)
 - Middleware: Enthält Middleware-Funktionen, die innerhalb des Routings eingesetzt werden. Siehe: [app/middleware/](../app/middleware)
 - Components: Enthält wiederverwendbare UI-Komponenten, die in mehreren Bereichen der Anwendung genutzt werden können. Siehe: [app/components/](../app/components)
+- Modals: Enthält aupoppende Web Elemente, die den User über verschiedenes Informieren können oder um kleine Funktionlitäten umzusetzen ohne eine eigne Seite zu implementieren. Siehe: [app/Modals/](../app/modals)
 
 ### Checkliste fürs Mitarbeiten:
 - Lese und befolge [README.md](../README.md) für das aufsetzen einer Entwicklungsumgebung

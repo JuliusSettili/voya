@@ -1,8 +1,8 @@
 export default function BlockUserModal({
-                                           profile,
-                                           blockReason,
-                                           onConfirm
-                                       }: {
+    profile,
+    blockReason,
+    onConfirm
+}: {
     profile: any;
     blockReason?: string;
     onConfirm: (profileId: string, shouldBlock: boolean, reason?: string) => Promise<void>;

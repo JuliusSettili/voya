@@ -1,17 +1,18 @@
-// this component is a text field with a edit button. 
-// if the button is clicked, the text field becomes editable.
-// if the button is clicked again, the text field becomes read only again and the onChange function is called with the new value.
-
+/* 
+Diese Componente ist ein Textfeld mit einem Editbutton. 
+Wenn der Button geclickt wird, wird das Textfeld editierbar. 
+Wenn der Button wieder geclickt wird, wird das Textfeld wieder read-only und die onChange Function wird mit dem neuen Wert gecalled. 
+*/
 import { useState } from "react";
 import { MdEdit, MdCheck } from "react-icons/md";
 
 export default function EditField({
-                                    value,
-                                    placeholderValue,
-                                    onChange,
-                                    className,
-                                    onEditStateChange,
-                                  }: {
+  value,
+  placeholderValue,
+  onChange,
+  className,
+  onEditStateChange,
+}: {
   value: string;
   placeholderValue: string;
   onChange: (newValue: string) => void;

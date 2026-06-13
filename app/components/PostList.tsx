@@ -1,3 +1,6 @@
+/*
+Diese Komponente ist eine Liste von Beiträgen.
+*/
 import PostCard from "~/components/PostCard";
 import type { Post } from "../../api/supabaseClient";
 

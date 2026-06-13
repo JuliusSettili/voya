@@ -1,3 +1,7 @@
+/* 
+Diese Componente ist die Navigationsbar der Webseite.
+Sie umfässt mehrer Dropdowns und Links zu den verschiedenen Seiten der Webseite. 
+*/
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { Link, useNavigate } from 'react-router';
