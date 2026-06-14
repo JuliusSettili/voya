@@ -60,14 +60,14 @@ export default function CountriesInput({ value, onChange }: CountriesInputProps)
   }, [countries, search]);
 
   return (
-      <div className="space-y-3">
-        <div className="input w-full">
+      <div>
+        <div className="input w-full flex flex-wrap h-auto py-2">
           {selectedCountries.map((country) => (
               <button
                   key={country.id}
                   type="button"
                   onClick={() => toggleCountry(country.id)}
-                  className="badge badge-primary badge-lg flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
+                  className="badge badge-primary badge-sm flex items-center gap-2 hover:opacity-80 transition-opacity shrink-0"
                   title={`${country.name} entfernen`}
               >
                 <ReactCountryFlag countryCode={country.code} svg />
@@ -99,7 +99,7 @@ export default function CountriesInput({ value, onChange }: CountriesInputProps)
                         key={country.id}
                         type="button"
                         onClick={() => toggleCountry(country.id)}
-                        className={`badge badge-lg flex items-center gap-2 transition-colors hover:badge-primary ${
+                        className={`badge badge-sm flex items-center gap-2 transition-colors hover:badge-primary ${
                             selected ? "badge-primary" : "badge-outline"
                         }`}
                         aria-pressed={selected}
