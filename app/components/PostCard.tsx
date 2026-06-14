@@ -55,16 +55,16 @@ export default function PostCard(props: {
     };
 
     return (
-        <div className={`card lg:card-side card-sm bg-base-100 shadow-sm ${isBlocked ? 'opacity-70 grayscale' : ''}`}>
-            <figure className="block lg:w-100 h-full">
+        <div className={`card lg:card-side card-sm bg-base-100 shadow-sm${isBlocked ? ' opacity-70 grayscale' : ''}`}>
+            <figure className="lg:w-400">
                 <img
                     src={imageUrl}
                     alt={title}
-                    className="object-cover w-full h-80 lg:w-100"
+                    className="w-full h-full object-cover"
                 />
             </figure>
             <div className="card-body">
-                <div className="flex justify-between mb-2">
+                <div className="mb-2">
                     <div className="flex items-center gap-2">
                         {/* Icon Logik: Nur auf Profilseite anzeigen */}
                         {isProfilePage && (
