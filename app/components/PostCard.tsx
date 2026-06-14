@@ -64,7 +64,7 @@ export default function PostCard(props: {
                 />
             </figure>
             <div className="card-body">
-                <div className="mb-2">
+                <div className="flex justify-between mb-2">
                     <div className="flex items-center gap-2">
                         {/* Icon Logik: Nur auf Profilseite anzeigen */}
                         {isProfilePage && (
