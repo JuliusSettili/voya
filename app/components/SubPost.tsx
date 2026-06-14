@@ -138,6 +138,7 @@ export function SubPost({
                   onChange={handleEditContent}
                   onEditStateChange={onEditStateChange}
                   className="mb-4"
+                  isTextarea
               />
           )}
           {!postBelongsToCurrentUser && (

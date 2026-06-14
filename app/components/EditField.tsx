@@ -9,12 +9,14 @@ import { MdEdit, MdCheck } from "react-icons/md";
 export default function EditField({
   value,
   placeholderValue,
+  isTextarea = false,
   onChange,
   className,
   onEditStateChange,
 }: {
   value: string;
   placeholderValue: string;
+  isTextarea?: boolean;
   onChange: (newValue: string) => void;
   className?: string;
   onEditStateChange?: (isEditing: boolean) => void;
@@ -45,17 +47,27 @@ export default function EditField({
           inputValue || <span className="text-gray-400 italic text-sm font-normal">{placeholderValue}</span>
       )}
       {isEditing && (
-        <input
-          type="text"
-          placeholder={placeholderValue}
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
+        isTextarea ? (
+          <textarea
+            placeholder={placeholderValue}
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
+            className={`w-full textarea textarea-bordered ${error ? "textarea-error" : ""}`}
+          />
+        ) : (
+          <input
+            type="text"
+            placeholder={placeholderValue}
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
             if (error) setError(null);
           }}
           readOnly={!isEditing}
-          className={`input input-bordered ${error ? "input-error" : ""}`}
-      />)}
+          className={`w-full input input-bordered ${error ? "input-error" : ""}`}
+      />))}
       <button
         type="button"
         onClick={handleEditClick}

@@ -32,6 +32,12 @@ export const links: Route.LinksFunction = () => [
   }
 ];
 
+export const meta: Route.MetaFunction = () => ([{
+  charset: "utf-8",
+  title: "Voya",
+  viewport: "width=device-width,initial-scale=1",
+}]);
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

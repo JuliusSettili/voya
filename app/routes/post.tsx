@@ -123,7 +123,7 @@ export default function PostPage({
             onCancel={() => blocker.reset?.()}
         />
         <main className="p-6 grid grid-cols-1 lg:grid-cols-4 gap-6 [grid-template-areas:'image'_'title'_'flags'_'description'_'content']
-        lg:[grid-template-areas:'title_flags_flags_image''description_description_description_image''content_content_content_image']">
+        lg:[grid-template-areas:'title_title_flags_image''description_description_description_image''content_content_content_image']">
           <img className="[grid-area:image]" src={postState.title_image_url} alt={postState.title} />
           <div className="[grid-area:title]">
             {belongsToUser ? (
@@ -160,6 +160,7 @@ export default function PostPage({
                     value={postState.description}
                     onChange={handleEditDescription}
                     onEditStateChange={handleEditStateChange}
+                    isTextarea
                 />
             ) : (
                 <p>{postState.description}</p>
