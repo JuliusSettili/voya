@@ -53,6 +53,7 @@ export default function RegisterPage() {
     return (
         <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: '1rem' }}>
             <Link to="/" className="btn btn-ghost btn-lg absolute top-4 left-4">
+                <img src="/voya/favicon.png" alt="Voya Logo" className="h-8 w-auto mr-2" />
                 Voya
             </Link>
             {isSuccessful ? (
