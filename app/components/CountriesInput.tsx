@@ -61,7 +61,7 @@ export default function CountriesInput({ value, onChange }: CountriesInputProps)
 
   return (
       <div>
-        <div className="input w-full flex flex-wrap h-auto py-2">
+        <div className="input w-full flex flex-wrap h-auto py-2 mb-2">
           {selectedCountries.map((country) => (
               <button
                   key={country.id}
