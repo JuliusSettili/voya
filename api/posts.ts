@@ -60,7 +60,7 @@ export async function fetchPost(id: string | number): Promise<Post> {
   const supabase = getSupabaseClient();
   const { data, error } = await supabase
     .from("posts")
-    .select("id, title, description, title_image_url, is_blocked, reason_is_blocked, is_private, countries (id, name, code), profiles (id, display_name), sub_posts (id, title, content, sub_post_images (id, image_url))")
+    .select("id, title, description, title_image_url, is_blocked, reason_is_blocked, is_private, countries (id, name, code), profiles (id, display_name), sub_posts (id, title, content, sub_post_images (id, image_url), created_at)")
     .eq("id", id)
     .single();
 

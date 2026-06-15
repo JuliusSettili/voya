@@ -37,6 +37,7 @@ export type SubPost = {
   title: string;
   content: string;
   sub_post_images: SubPostImage[];
+  created_at: Date;
 }
 
 export type Post = {

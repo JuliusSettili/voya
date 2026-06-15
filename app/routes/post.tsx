@@ -167,7 +167,9 @@ export default function PostPage({
             )}
           </div>
           <div className="[grid-area:content]">
-            {postState.sub_posts?.map((subPost) => (
+            {[...(postState.sub_posts ?? [])]
+              .sort((a, b) =>  new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+              .map((subPost) => (
                 <SubPost
                     key={subPost.id}
                     subPost={subPost}
